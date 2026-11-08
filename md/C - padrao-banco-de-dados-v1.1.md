@@ -1,8 +1,7 @@
 # Padrão do banco de dados · Método Modular
 ## Como adicionar alimentos, preparos e pratos com etiquetas
 
-**Versão 1.1** · Criado em 08/11/2026 · Última atualização: 08/11/2026
-Vale para as versões mais recentes do manual e do Anexo A (conferido com o manual 3.16 e o Anexo A 1.12).
+**Versão 1.1** · Criado em 08/11/2026 · Última atualização: 08/11/2026 · Usado com o manual 3.16 e o Anexo A 1.13
 
 ---
 
@@ -10,11 +9,7 @@ Vale para as versões mais recentes do manual e do Anexo A (conferido com o manu
 - **Para que serve:** este arquivo define o **formato** de cada item do banco de dados e as **etiquetas** que ele precisa ter. Com elas, a página do método faz trocas sozinha, sem IA (exemplo: a pessoa marca que não gosta de mamão, e a página coloca outra fruta no lugar).
 - **Quando usar:** sempre que for adicionar, mudar ou revisar um alimento, ingrediente, preparo ou prato no Anexo A ou no banco de dados da página, siga este arquivo, mesmo que ninguém peça.
 - **O Anexo A continua sendo a fonte dos dados.** Este arquivo diz como cada dado deve ser escrito para o app conseguir ler.
-- **Arquivos ligados a este:**
-    - **manual** (`metodo-modular-alimentacao`): as regras e os módulos. As listas fechadas da seção 5 vêm dele (seções 4.1 a 4.7 e 5.1);
-    - **Anexo A** (`anexo-a`): os dados. Hoje está em tabelas. Decisão do admin: na próxima ampliação do banco, os itens que já existem também passam para as fichas deste padrão;
-    - **projeto** (`projeto-app-metodo-modular`): a visão do produto e o site de teste, que vai ler o banco no formato da seção 9.
-- **Em caso de conflito,** vale o manual. Se uma lista fechada daqui ficar diferente do manual, ajuste este arquivo e registre no histórico.
+- **As fichas preenchidas ficam no arquivo de fichas** (`fichas-banco-de-dados`, a versão mais alta). Todo item novo do Anexo A ganha a sua ficha lá.
 - **Todo item novo segue este padrão por completo.** Um item com campo vazio ou com etiqueta errada quebra as trocas sem ninguém perceber.
 - **Use só as palavras das listas fechadas (seção 5).** Não invente etiquetas novas. Se faltar uma, anote como sugestão para a próxima versão deste arquivo.
 - **Confirme com o admin** antes de mudar este padrão. Toda mudança gera uma versão nova (1.1, 1.2…), muda o número no nome do arquivo e entra no histórico (seção 10).
@@ -26,7 +21,7 @@ Vale para as versões mais recentes do manual e do Anexo A (conferido com o manu
 | Tipo | O que é | Exemplos |
 | --- | --- | --- |
 | **Ingrediente** | Item comprado no mercado | Banana nanica, fubá, peito de frango, muçarela |
-| **Preparo** | Feito com antecedência, na cozinha ou no armazenamento, e guardado em pote, saquinho ou forminha | Arroz cozido, molho branco, torta de frango, cenoura branqueada, kit de vitamina |
+| **Preparo** | Feito com antecedência, na cozinha ou no armazenamento, e guardado em pote, saquinho ou cubo (forminha de gelo) | Arroz cozido, molho branco, torta de frango, cenoura branqueada, kit de vitamina |
 | **Prato na hora** | Montado na hora da refeição, com ingredientes e preparos do estoque | Tapioca com muçarela, ovos mexidos, salada, mingau |
 
 A ligação entre eles:
@@ -122,7 +117,9 @@ Sem processo: inteiro
 freezer · geladeira · gaveta da geladeira · fruteira · despensa
 
 ### 5.5 Embalagem
-pote de porção · pote da praça · pote seco · saquinho · forminha · original
+pote de porção · pote da praça · pote seco · saquinho · cubo · original
+
+**cubo** é a forminha de gelo com tampa, contada por forminha, como no manual (seção 4.6).
 
 ### 5.6 Seção e subseção de compra (nesta ordem no mercado)
 1. hortifrúti → frutas · legumes · folhas
@@ -250,8 +247,6 @@ A página lê os dados como objetos do JavaScript. Cada ficha vira um objeto com
   composicao: [], obs: "" }
 ```
 
-**Situação atual:** os arquivos `dados-semanaN.js` do site ainda usam um formato próprio, mais simples (lista de compras, passos e cardápio de cada semana). A troca para este formato fica para quando o banco de dados estiver pronto.
-
 Regras do formato:
 - Campos com mais de um valor (`papel`, `refeicoes`, `entra_em`, `substitutos`, `composicao`) são **listas** entre colchetes, mesmo quando têm um item só.
 - Porcentagens viram número decimal: 65% = `0.65`.
@@ -264,4 +259,4 @@ Regras do formato:
 | Versão | Data | Alteração |
 | --- | --- | --- |
 | 1.0 | 08/11/2026 | Criação: tipos de registro, fichas, listas fechadas, regras de troca, passo a passo, exemplos e formato para a página |
-| 1.1 | 08/11/2026 | Vale para as versões mais recentes do manual e do Anexo A (conferido com o 3.16 e o 1.12); arquivos ligados, regra de conflito e conversão dos itens antigos do Anexo A na seção 0; situação atual dos dados do site na seção 9 |
+| 1.1 | 08/11/2026 | Versões do manual (3.16) e do Anexo A (1.13) atualizadas; embalagem "forminha" trocada por "cubo", como no manual; as fichas preenchidas passam a ficar no arquivo de fichas |

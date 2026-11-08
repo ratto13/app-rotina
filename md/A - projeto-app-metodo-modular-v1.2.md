@@ -8,25 +8,25 @@
 ## 0. Para a IA (leia primeiro)
 - **Do que trata este projeto:** transformar o Método Modular de Alimentação num produto que as pessoas usem e paguem, como um app, uma página na internet, um produto digital ou uma assinatura.
 - **Com quem você está falando:** o criador do método (o admin), não a pessoa que usa o método. Não conduza a Fase 1 do manual.
-- **Papel da IA:** ajudar a planejar e construir o produto (telas, funções, site de teste, banco de dados), os testes, os custos, a divulgação e a forma de ganhar dinheiro.
+- **Papel da IA:** ajudar a planejar o produto, as telas, as funções, os testes, os custos, a divulgação e a forma de ganhar dinheiro.
 - **Tom:** linguagem simples, sem jargão técnico. Quando um termo técnico for necessário, explique em uma frase. Respostas diretas ao que foi perguntado.
-- **Arquivos do método** (manual, Anexo A e padrão do banco de dados): ficam neste Projeto. A IA só altera quando o admin pedir, e avisa antes se o pedido for contra uma regra do manual. Uma ideia que muda o método e não foi pedida vira sugestão, sem mexer nos arquivos.
-- **Arquivos do Projeto:** a IA não adiciona nem apaga arquivos do Projeto. Entrega o arquivo novo para o admin baixar e atualizar.
-- **Versões:** toda mudança num arquivo gera uma versão nova (1.1, 1.2…), com o número no nome do arquivo e o registro no histórico. Confirme com o admin antes de mudar este arquivo.
+- **O método em si** (manual, Anexo A, padrão e fichas do banco de dados) fica neste projeto. Não altere esses arquivos sem confirmar com o admin. Se um pedido for contra uma regra do manual, avise antes de mudar.
+- **Ao adicionar ou mudar alimentos, ingredientes, preparos ou pratos,** siga o padrão do banco de dados (a versão mais alta) e escreva a ficha no arquivo de fichas.
+- **Não adicione nem apague arquivos do Projeto.** Entregue o arquivo para o admin baixar e atualizar.
+- **Confirme antes de mudar** este arquivo. Toda mudança gera versão (1.1, 1.2 e assim por diante) e entra no histórico da seção 8.
 
 ---
 
 ## 1. Arquivos do projeto
-Cada arquivo leva a versão no nome (exemplo: `anexo-a-v1.12.md`). Usar sempre a versão mais alta que estiver no Projeto. As letras no começo do nome (A, B, C, Z) só servem para ordenar a lista.
+Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabética, e a versão no nome (exemplo: `Z - anexo-a-v1.13.md`). Toda mudança gera uma versão nova, com o número no nome e registro no histórico. Usar sempre a versão mais alta que estiver no projeto.
 
-| Arquivo | Para que serve | Liga com |
+| Letra | Arquivo | Para que serve |
 | --- | --- | --- |
-| Este arquivo (`projeto-app-metodo-modular`) | Visão do produto, decisões, site de teste e próximos passos | Todos |
-| Manual (`metodo-modular-alimentacao`) | As regras do método: é o que o site e o app precisam seguir | Anexo A (dados) |
-| Anexo A (`anexo-a`) | Os dados: catálogo, receitas e tabelas, que viram o banco de dados do app | Manual (regras) e padrão (formato) |
-| Padrão do banco de dados (`padrao-banco-de-dados`) | Como escrever cada alimento, preparo e prato, com as etiquetas que permitem as trocas | Manual (listas fechadas) e Anexo A (dados) |
-
-**Em caso de conflito entre arquivos:** vale o manual.
+| A | Este arquivo (`projeto-app-metodo-modular`) | Visão do produto, decisões e próximos passos |
+| B | Manual (`metodo-modular-alimentacao`) | As regras do método: é o que o app precisa seguir |
+| C | Padrão do banco de dados (`padrao-banco-de-dados`) | O formato e as etiquetas de cada item, para a página fazer as trocas sozinha |
+| D | Fichas do banco de dados (`fichas-banco-de-dados`) | Os itens já escritos no formato do padrão, prontos para a página |
+| Z | Anexo A (`anexo-a`) | Os dados: catálogo, receitas e tabelas. É a fonte do banco de dados do app |
 
 ---
 
@@ -35,7 +35,6 @@ Cada arquivo leva a versão no nome (exemplo: `anexo-a-v1.12.md`). Usar sempre a
 - **A solução:** organizar a semana. A pessoa compra, guarda e cozinha de uma vez, divide tudo em porções individuais e congela. Durante a semana, só monta o prato e esquenta.
 - **O que torna o método diferente:** não é contador de calorias nem livro de receitas. É um sistema que ensina a organizar a semana, com um estoque contado em potes, um cardápio montado a partir do estoque e uma lista de compras que sai do cardápio. A pessoa avança por níveis, aos poucos.
 - **Para quem é:** pessoas que têm dificuldade de manter uma rotina e se alimentam mal. O produto precisa ser muito simples e cobrar pouco esforço por dia.
-- **Para quem não é (na versão de teste):** pessoas com restrição alimentar (alergia, intolerância, doença celíaca, diabetes, dieta vegetariana).
 
 ---
 
@@ -50,42 +49,13 @@ Cada arquivo leva a versão no nome (exemplo: `anexo-a-v1.12.md`). Usar sempre a
 - **Primeiro provar que funciona, depois construir.** Ideia sozinha não se vende. O que tem valor é a prova: pessoas usando, seguindo a rotina e economizando.
 - **Começar pequeno e barato:** a primeira versão deve custar quase só tempo.
 - **Primeira versão em página na internet** (abre no navegador do celular), não um app de loja: não paga taxa de loja e usa o que o admin está aprendendo no curso de front-end.
-- **O teste é feito pelo site** (seção 5), com semanas prontas. A personalização é feita por trocas simples, sem IA.
-- **Renda e nome do produto ficam para depois** do teste.
 
 ---
 
-## 5. Site de teste
-- **Endereço:** https://ratto13.github.io/app-rotina/ (repositório `ratto13/app-rotina`, publicado pelo GitHub Pages).
-- **Caminho da pessoa:** home → aviso e explicação de como o cardápio é montado → pergunta 1 (quantas refeições por dia: 6, 5, 4 ou 3) → pergunta 2 (do que não gosta) → cardápio da semana para aprovar → compra → guardar → cozinha → cardápio do dia a dia → estoque → relatório.
-- **Relatório:** dividido em "Seu relatório" (o que a pessoa fez) e "Feedback do método". É enviado por e-mail para menumodular@gmail.com (ou copiado e colado).
-- **Semanas:** Semana 1 e Semana 2, no nível 1. A Semana 2 começa com o que sobrou no freezer da Semana 1.
-- **Trocas sem IA:** a pessoa pode tirar tapioca, cuscuz, torrada, pão de forma, mingau e atum. A página troca por outra peça do mesmo papel e tira o item da compra. Pratos do freezer, frutas e saladas ainda não mudam.
-- **Limite:** o que a pessoa marca fica salvo só no celular e no navegador dela.
-
-**Arquivos do site**
-
-| Arquivo | O que tem |
-| --- | --- |
-| `index.html` e `home.css` | A home, que explica o método |
-| `semana1.html`, `semana2.html`… | A página de cada semana (só a estrutura) |
-| `dados-semanaN.js` | Os dados de cada semana: compra, passos de guardar e de cozinhar, cardápio e estoque esperado. Seguem a lista sugerida e os exemplos do Anexo A |
-| `script.js` | A lógica, igual para todas as semanas |
-| `style.css` | O visual das semanas |
-
-**Regras para mexer no site**
-- O site segue o manual. Os dados da Semana 1 seguem os exemplos do Anexo A (seções A.6.1 a A.6.5): quando o anexo mudar, conferir se o `dados-semana1.js` precisa mudar junto.
-- O código é comentado bloco por bloco, em português.
-- Ao mudar o site, entregar só os arquivos que mudaram, dizer quais substituir e passar os comandos do git.
-
----
-
-## 6. Próximos passos
-1. **Teste com pessoas reais:** 2 ou 3 pessoas usam o site por 2 semanas e mandam o relatório. Anotar o tempo de cozinha, o dinheiro gasto, as refeições seguidas, o que desperdiçou e onde travaram.
-2. **Banco de dados:** ampliar alimentos e receitas seguindo o `padrao-banco-de-dados`, para a lista "Do que você não gosta?" crescer. **Decisão do admin:** na mesma ampliação, os itens que já existem no Anexo A também passam para o formato do padrão. Na próxima versão do Anexo A, também:
-    - fechar a lacuna do hambúrguer na seção A.7 (decidido no manual 3.16: o [moldado] é exceção e leva o tempero na massa);
-    - ajustar a restrição "Receitas guardadas cruas: sem tempero" da matriz (A.4.1), citando a exceção do [moldado].
-3. **Depois:** mais semanas, lembretes, níveis, conferência semanal e o resto.
+## 5. Caminho sugerido
+1. **Teste com pessoas reais (sem gastar):** 2 ou 3 pessoas usam o método por 4 semanas, num Projeto do Claude com o manual e o Anexo A. Anotar o tempo de cozinha, o dinheiro gasto, as refeições seguidas, o que desperdiçou e onde travaram.
+2. **Versão mínima:** só o estoque, o cardápio da semana e a lista de compras. A IA monta o cardápio por trás.
+3. **Depois:** lembretes, níveis, conferência semanal e o resto.
 
 **Formas de ganhar com o método**, da mais simples para a mais complexa:
 1. **Produto digital** (guia ou curso), vendido na Hotmart.
@@ -95,12 +65,12 @@ Cada arquivo leva a versão no nome (exemplo: `anexo-a-v1.12.md`). Usar sempre a
 
 ---
 
-## 7. Custos (valores aproximados)
+## 6. Custos (valores aproximados)
 - **Construir:** de R$ 30 mil a mais de R$ 150 mil, se for contratado. Se for feito pelo admin, o custo é o tempo.
 - **Divulgar:** anúncios, conteúdo e parcerias, todo mês. Costuma custar mais que construir.
 - **Manter:**
     - correções e atualizações, cerca de 15% a 20% do custo de construção por ano;
-    - servidor e banco de dados, de R$ 0 a R$ 100 por mês no começo (o site de teste no GitHub Pages é gratuito);
+    - servidor e banco de dados, de R$ 0 a R$ 100 por mês no começo;
     - a IA, alguns reais por usuário por mês, que precisam caber no preço.
 - **Lojas:**
     - Google Play, cerca de US$ 25 uma vez;
@@ -110,9 +80,8 @@ Cada arquivo leva a versão no nome (exemplo: `anexo-a-v1.12.md`). Usar sempre a
 
 ---
 
-## 8. Cuidados
+## 7. Cuidados
 - **Nutricionista:** no Brasil, montar dieta é trabalho de nutricionista. O método trata de organização e de porções, não de dieta. Ter uma profissional revisando dá credibilidade e protege o projeto.
-- **Restrição alimentar:** o site avisa que o método está em teste e não serve para quem tem restrição alimentar.
 - **Marca:** registrar o nome quando estiver definido.
 - **Dados das pessoas:** o app guarda gostos, peso e rotina, por isso precisa seguir a LGPD.
 - **Público:** quem larga rotinas também larga apps. Cada tela precisa ser simples e rápida.
@@ -124,10 +93,33 @@ Cada arquivo leva a versão no nome (exemplo: `anexo-a-v1.12.md`). Usar sempre a
 
 ---
 
-## 9. Histórico
+## 8. Histórico
 
 | Versão | Data | Alteração |
 | --- | --- | --- |
 | 1.0 | 07/11/2026 | Criação: visão do produto, decisões, caminho sugerido, custos e cuidados |
 | 1.1 | 08/11/2026 | Arquivos com a versão no nome, inclusive este (usar sempre a mais alta); relatório de receitas e lacunas na lista de arquivos; a IA pode alterar os arquivos do método quando o admin pedir |
-| 1.2 | 08/11/2026 | Pendências para o próximo Anexo A (conversão dos itens antigos para o padrão; lacuna do hambúrguer resolvida no manual 3.16). Lista de arquivos com o padrão do banco de dados e a ligação entre eles (sai o relatório de receitas e lacunas); regras de arquivos e versões na seção 0, alinhadas com as instruções do Projeto; nova seção 5 com o site de teste (endereço, caminho da pessoa, relatório por e-mail, trocas, arquivos e regras); próximos passos atualizados (teste pelo site, banco de dados); público fora do teste (restrição alimentar); bloco de instruções do Projeto removido, porque elas ficam nas configurações do Projeto |
+| 1.2 | 08/11/2026 | Lista de arquivos com as letras, o padrão e as fichas do banco de dados (sai o relatório); o método fica neste projeto, com confirmação do admin antes de mudar; instruções do projeto iguais às que estão no Claude |
+
+---
+
+**Instruções para o projeto** (cópia do que está nas instruções do Projeto no Claude)
+> Você ajuda o criador do Método Modular de Alimentação (o admin) a transformar o método num produto. Não é uma pessoa usando o método: não conduza a Fase 1 do manual.
+>
+> Linguagem simples, sem jargão técnico. Respostas diretas ao que foi perguntado, sem misturar outros assuntos.
+>
+> Arquivos do método (manual, Anexo A e padrão do banco de dados):
+> - Não altere sem confirmar comigo. Se um pedido for contra uma regra do manual, avise antes de mudar.
+> - Toda mudança gera nova versão, com o número no nome do arquivo (ex.: anexo-a-v1.12.md) e registro no histórico.
+> - Não adicione nem apague arquivos do Projeto. Entregue o arquivo para eu baixar e atualizar.
+> - Manter a letra em maiúsculo para propósito de organização de arquivos de forma alfabética
+>
+> Ao adicionar ou mudar alimentos, ingredientes, preparos ou pratos, siga o arquivo padrao-banco-de-dados (a versão mais recente).
+>
+> Site de teste:
+> - Fica no GitHub (ratto13/app-rotina) e é publicado pelo GitHub Pages.
+> - Arquivos: index.html e home.css (home); semana1.html, semana2.html…; dados-semanaN.js (dados de cada semana); script.js (lógica, igual para todas as semanas); style.css.
+> - Estou aprendendo front-end: comente o código bloco por bloco, em português.
+> - Ao mudar o site, entregue só os arquivos que mudaram, diga quais substituir e passe os comandos do git.
+> - O site segue as regras do manual. O método está em teste e não serve para pessoas com restrição alimentar.
+> - Os relatórios dos testadores vão para menumodular@gmail.com.
