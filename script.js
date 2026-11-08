@@ -196,7 +196,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 // Primeiro acende o botão certo na barra de baixo; depois chama a função da aba (inicio, preparar...).
 function render(){
   document.querySelectorAll("nav.bot button").forEach(b => b.classList.toggle("on", b.dataset.tab===S.tab));
-  ({inicio, gostos, aprovar, preparar, cardapio, estoque, relatorio})[S.tab]();
+  ({inicio, gostos, naogosto, aprovar, preparar, cardapio, estoque, relatorio})[S.tab]();
 }
 
 // TELA INÍCIO: o texto de boas-vindas, as etapas com barra de progresso e as palavras do método.
@@ -204,7 +204,7 @@ function inicio(){
   const tot = totalRef(), comi = mealCount("comi");
   // Cada etapa é [ícone, título, texto, porcentagem, aba de destino, sub-aba].
   const steps = [
-    ["🧭","Entender o cardápio e seus gostos",G._visto ? "Feito · "+nRef()+" refeições por dia"+(trocas() ? " · "+trocas()+" ajustes" : "") : "Comece por aqui",G._visto?100:0,"gostos",null],
+    ["🧭","Entender o cardápio e responder as perguntas",G._visto ? "Feito · "+nRef()+" refeições por dia"+(trocas() ? " · "+trocas()+" ajustes" : "") : "Comece por aqui",G._visto?100:0,"gostos",null],
     ["👍","Aprovar o cardápio",S.aprovado ? "Aprovado" : "Veja a semana antes da compra",S.aprovado?100:0,"aprovar",null],
     ["🛒","Fazer a compra",`${shopDone()} de ${allShop().length} itens`,pct(shopDone(),allShop().length),"preparar","compra"],
     ["🧊","Guardar a compra",`${armDone()} de ${allArm.length} etapas`,pct(armDone(),allArm.length),"preparar","guardar"],
@@ -246,8 +246,6 @@ function inicio(){
 // TELA CARDÁPIO E GOSTOS: explica como o cardápio é montado e pergunta do que a pessoa não gosta.
 // Abre pelo primeiro passo do Início (não tem botão na barra de baixo).
 function gostos(){
-  const grupos = [...new Set(GOSTOS.map(o => o.g))];
-  const nenhumaBase = BASE_ORDEM.every(b => naoGosta(b));
   $app.innerHTML = `<h1>Como o seu cardápio é montado</h1>
 
     <div class="card" style="background:var(--tomato-l);border-color:#F2CDB9">
@@ -283,7 +281,11 @@ function gostos(){
       <li>De uma semana para a outra, os almoços e as jantas mudam.</li>
     </ul>
 
-    <h2>🍽️ Quantas refeições por dia você quer fazer?</h2>
+    <div class="card" style="background:var(--green-l);border-color:#BFD9C7;margin-top:22px">
+      <b>📝 Para montar o seu cardápio, responda duas perguntas rápidas.</b>
+    </div>
+    <span class="pill s">Pergunta 1 de 2</span>
+    <h2 style="margin-top:8px">🍽️ Quantas refeições por dia você quer fazer?</h2>
     <p class="muted">Se 6 for demais para a sua rotina, dá para fazer menos. A página junta ou tira refeições para caber no seu dia.</p>
     <div class="card" style="padding:4px 12px">
       ${[[6,"6 refeições (recomendado)","Café, lanche da manhã, almoço, lanche da tarde, janta e ceia."],
@@ -294,25 +296,38 @@ function gostos(){
     </div>
     ${nRef() < 6 ? `<p class="muted" style="font-size:.88rem">Com menos refeições, fica mais difícil comer toda a proteína do dia. Nesta versão de teste, a lista de compras não muda: o que sobrar fica na despensa ou no freezer para a próxima semana.</p>` : ""}
 
-    <h2>👎 Do que você não gosta?</h2>
-    <p class="muted">Marque o que não quer no cardápio. A página troca por outra peça do mesmo papel e tira o item da lista de compras.</p>
+    <button class="btn" id="prox" style="width:100%;margin-top:8px">Próxima pergunta ›</button>`;
+  // Escolher quantas refeições por dia: salva e redesenha a tela.
+  $app.querySelectorAll("[data-ref]").forEach(el => el.onclick = () => {
+    G.refeicoes = +el.dataset.ref; saveGostos(); const y = window.scrollY; gostos(); window.scrollTo(0,y);
+  });
+  // Botão Próxima pergunta: abre a tela "Do que você não gosta?".
+  document.getElementById("prox").onclick = () => { S.tab = "naogosto"; go(); window.scrollTo(0,0); };
+}
+
+// TELA NÃO GOSTO: a pergunta 2, com a lista do que a pessoa não quer no cardápio.
+// No fim, o botão gera o cardápio e abre a tela de aprovar.
+function naogosto(){
+  const grupos = [...new Set(GOSTOS.map(o => o.g))];
+  const nenhumaBase = BASE_ORDEM.every(b => naoGosta(b));
+  $app.innerHTML = `<span class="pill s">Pergunta 2 de 2</span>
+    <h1 style="margin-top:8px">👎 Do que você não gosta?</h1>
+    <p class="muted">Marque o que não quer no cardápio. A página troca por outra peça do mesmo papel e tira o item da lista de compras. Se gosta de tudo, é só seguir.</p>
     ${grupos.map(gr => `<div class="sub-t">${gr}</div><div class="card" style="padding:4px 12px">
       ${GOSTOS.filter(o => o.g===gr).map(o => `<div class="chk ${naoGosta(o.id)?"on":""}" data-g="${o.id}"><div class="box">${naoGosta(o.id)?"✓":""}</div><div class="lbl">${o.n}</div></div>`).join("")}
     </div>`).join("")}
     ${nenhumaBase ? `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8">Deixe pelo menos uma base sem marcar, para a página ter o que colocar no lugar.</div>` : ""}
     <div class="card" style="background:var(--green-l);border-color:#BFD9C7">${trocas() ? `<b>✓ ${trocas()} refeições ajustadas</b> aos seus gostos.` : "Nenhuma troca: o cardápio fica como foi planejado."}</div>
     <p class="muted" style="font-size:.88rem"><b>O que não muda nesta versão de teste:</b> os pratos do freezer, as frutas e as saladas, porque eles mudam a compra e a cozinha da semana inteira.</p>
-    <button class="btn" id="pronto" style="width:100%;margin-top:8px">Pronto, ver meu cardápio ›</button>`;
-  // Escolher quantas refeições por dia: salva e redesenha a tela.
-  $app.querySelectorAll("[data-ref]").forEach(el => el.onclick = () => {
-    G.refeicoes = +el.dataset.ref; saveGostos(); const y = window.scrollY; gostos(); window.scrollTo(0,y);
-  });
+    <button class="btn" id="pronto" style="width:100%;margin-top:8px">Gerar meu cardápio ›</button>
+    <button class="btn ghost" id="volta" style="width:100%;margin-top:10px">‹ Voltar para a pergunta 1</button>`;
   // Marcar ou desmarcar um "não gosto": salva, e a tela se redesenha com o novo número de trocas.
   $app.querySelectorAll("[data-g]").forEach(el => el.onclick = () => {
-    G[el.dataset.g] = !G[el.dataset.g]; saveGostos(); const y = window.scrollY; gostos(); window.scrollTo(0,y);
+    G[el.dataset.g] = !G[el.dataset.g]; saveGostos(); const y = window.scrollY; naogosto(); window.scrollTo(0,y);
   });
-  // Botão Pronto: marca esta etapa como vista e abre o cardápio para aprovar.
+  // Gerar: marca as perguntas como respondidas e abre o cardápio para aprovar.
   document.getElementById("pronto").onclick = () => { G._visto = true; saveGostos(); S.tab = "aprovar"; go(); window.scrollTo(0,0); };
+  document.getElementById("volta").onclick = () => { S.tab = "gostos"; go(); window.scrollTo(0,0); };
 }
 
 // TELA PREPARAR: tem 3 sub-abas (Compra, Guardar, Cozinha).
@@ -461,12 +476,12 @@ function aprovar(){
     ${tabela(null)}
     <p class="muted">A lista de compras é feita a partir deste cardápio. Depois, na aba Cardápio, você vê cada dia completo, com as bebidas.</p>
     <button class="btn" id="aprova" style="width:100%;margin-top:10px">👍 Aprovar e ir para a compra</button>
-    <button class="btn ghost" id="muda" style="width:100%;margin-top:10px">Quero mudar meus gostos</button>`;
+    <button class="btn ghost" id="muda" style="width:100%;margin-top:10px">Quero mudar minhas respostas</button>`;
   // Na aprovação, os botões dos dias da tabela não fazem nada (só mostram o nome do dia).
   $app.querySelectorAll("[data-day]").forEach(b => b.disabled = true);
   // Aprovar: guarda que esta semana foi aprovada e abre a lista de compras.
   document.getElementById("aprova").onclick = () => { S.aprovado = true; S.tab = "preparar"; S.prep = "compra"; go(); window.scrollTo(0,0); toast("Cardápio aprovado ✓"); };
-  // Mudar: volta para a tela de gostos.
+  // Mudar: volta para a primeira pergunta.
   document.getElementById("muda").onclick = () => { S.tab = "gostos"; go(); window.scrollTo(0,0); };
 }
 
@@ -700,7 +715,7 @@ function ask(title, text, yes, label){
   document.getElementById("mYes").onclick = () => { m.classList.remove("show"); yes(); };
 }
 // TABS: as abas que existem. Usadas para ler o endereço (#inicio, #cardapio...).
-const TABS = ["inicio","gostos","aprovar","preparar","cardapio","estoque","relatorio"];
+const TABS = ["inicio","gostos","naogosto","aprovar","preparar","cardapio","estoque","relatorio"];
 // go(): salva, atualiza o endereço da página com a aba atual (#cardapio, por ex.) e redesenha.
 function go(){ save(); if (location.hash !== "#"+S.tab) { try { history.replaceState(null,"","#"+S.tab); } catch(e){} } render(); }
 // Liga os botões da barra de baixo: cada um troca de aba.
