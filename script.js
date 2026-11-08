@@ -169,7 +169,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 // Primeiro acende o botão certo na barra de baixo; depois chama a função da aba (inicio, preparar...).
 function render(){
   document.querySelectorAll("nav.bot button").forEach(b => b.classList.toggle("on", b.dataset.tab===S.tab));
-  ({inicio, gostos, preparar, cardapio, estoque, relatorio})[S.tab]();
+  ({inicio, gostos, aprovar, preparar, cardapio, estoque, relatorio})[S.tab]();
 }
 
 // TELA INÍCIO: o texto de boas-vindas, as etapas com barra de progresso e as palavras do método.
@@ -177,7 +177,8 @@ function inicio(){
   const tot = 42, comi = mealCount("comi");
   // Cada etapa é [ícone, título, texto, porcentagem, aba de destino, sub-aba].
   const steps = [
-    ["🧭","Entender o cardápio",G._visto ? "Feito"+(Object.keys(G).filter(k=>k!=="_visto"&&G[k]).length ? " · ajustado aos seus gostos" : "") : "Comece por aqui",G._visto?100:0,"gostos",null],
+    ["🧭","Entender o cardápio e seus gostos",G._visto ? "Feito"+(trocas() ? " · "+trocas()+" refeições ajustadas" : "") : "Comece por aqui",G._visto?100:0,"gostos",null],
+    ["👍","Aprovar o cardápio",S.aprovado ? "Aprovado" : "Veja a semana antes da compra",S.aprovado?100:0,"aprovar",null],
     ["🛒","Fazer a compra",`${shopDone()} de ${allShop().length} itens`,pct(shopDone(),allShop().length),"preparar","compra"],
     ["🧊","Guardar a compra",`${armDone()} de ${allArm.length} etapas`,pct(armDone(),allArm.length),"preparar","guardar"],
     ["🍳","Cozinhar a semana",`${cozDone()} de ${allCoz.length} preparos · ${SEMANA.tempoCozinha}`,pct(cozDone(),allCoz.length),"preparar","cozinha"],
@@ -263,13 +264,13 @@ function gostos(){
     ${nenhumaBase ? `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8">Deixe pelo menos uma base sem marcar, para a página ter o que colocar no lugar.</div>` : ""}
     <div class="card" style="background:var(--green-l);border-color:#BFD9C7">${trocas() ? `<b>✓ ${trocas()} refeições ajustadas</b> aos seus gostos.` : "Nenhuma troca: o cardápio fica como foi planejado."}</div>
     <p class="muted" style="font-size:.88rem"><b>O que não muda nesta versão de teste:</b> os pratos do freezer, as frutas e as saladas, porque eles mudam a compra e a cozinha da semana inteira.</p>
-    <button class="btn" id="pronto" style="width:100%;margin-top:8px">Pronto, ir para a compra ›</button>`;
+    <button class="btn" id="pronto" style="width:100%;margin-top:8px">Pronto, ver meu cardápio ›</button>`;
   // Marcar ou desmarcar um "não gosto": salva, e a tela se redesenha com o novo número de trocas.
   $app.querySelectorAll("[data-g]").forEach(el => el.onclick = () => {
     G[el.dataset.g] = !G[el.dataset.g]; saveGostos(); const y = window.scrollY; gostos(); window.scrollTo(0,y);
   });
-  // Botão Pronto: marca esta etapa como vista e vai para a lista de compras.
-  document.getElementById("pronto").onclick = () => { G._visto = true; saveGostos(); S.tab = "preparar"; S.prep = "compra"; go(); window.scrollTo(0,0); };
+  // Botão Pronto: marca esta etapa como vista e abre o cardápio para aprovar.
+  document.getElementById("pronto").onclick = () => { G._visto = true; saveGostos(); S.tab = "aprovar"; go(); window.scrollTo(0,0); };
 }
 
 // TELA PREPARAR: tem 3 sub-abas (Compra, Guardar, Cozinha).
@@ -283,6 +284,7 @@ function preparar(){
     html += `<p class="muted">Marque cada item quando ele entrar no carrinho. A lista segue o caminho do mercado: os gelados ficam por último.</p>
       <div class="bar" style="margin:10px 0 4px"><i style="width:${pct(shopDone(),allShop().length)}%"></i></div>
       <p class="muted">${shopDone()} de ${allShop().length} itens</p>
+      ${!S.aprovado ? `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8">Você ainda não aprovou o cardápio. A lista de compras é feita a partir dele. <a href="#aprovar">Ver e aprovar o cardápio</a></div>` : ""}
       ${SEMANA.notaCompra ? `<div class="card" style="background:var(--blue-l);border-color:#C8DBE8">${SEMANA.notaCompra}</div>` : ""}`;
     shopList().forEach((sec,si) => {
       html += `<div class="sec-t">${sec.sec}</div><div class="card" style="padding:4px 12px">`;
@@ -394,6 +396,38 @@ function bindItems(){
   $app.querySelectorAll("details.it").forEach(d => d.addEventListener("toggle", () => { if (d.open) S.open = d.dataset.id; }));
 }
 
+// tabela(): monta a tabela enxuta da semana, com os dias nas colunas e as refeições nas linhas.
+// É usada em dois lugares: na tela de aprovar o cardápio e no começo da aba Cardápio.
+// d = o dia destacado (ou null para nenhum). A primeira coluna (ícones) fica parada ao rolar.
+// Cada célula ganha a cor do que foi marcado: verde = comi, amarelo = troquei, cinza = pulei.
+function tabela(d){
+  return `<div class="tab-wrap"><table class="semana">
+    <thead><tr><th></th>${WEEK.map((x,i) => `<th><button data-day="${i}" class="${i===d?"on":""}">${x.d}</button></th>`).join("")}</tr></thead>
+    <tbody>${MEALS.map((ml,j) => {
+      const [ic, nm] = ml.split("|");
+      return `<tr><th title="${nm}">${ic}</th>${CURTO.map((dia,i) => `<td class="st-${S.meals[mealKey(i,j)]||""}">${ajusta(dia[j])}</td>`).join("")}</tr>`;
+    }).join("")}</tbody></table></div>
+    <p class="muted" style="font-size:.8rem">☕ café · 🥤 lanche da manhã · 🍽️ almoço · 🥪 lanche da tarde · 🥗 janta · 🌙 ceia. Arraste a tabela para o lado.</p>`;
+}
+
+// TELA APROVAR: mostra o cardápio da semana, já com os gostos, para a pessoa aprovar antes da compra.
+// É o mesmo passo do manual: a lista de compras só vem depois que o cardápio é confirmado.
+function aprovar(){
+  $app.innerHTML = `<span class="pill">Semana ${SEMANA.num}</span>
+    <h1>Seu cardápio da semana</h1>
+    <p>Este é o cardápio montado para você${trocas() ? `, com <b>${trocas()} refeições ajustadas</b> aos seus gostos` : ""}. Dê uma olhada: se estiver do seu gosto, aprove e siga para a lista de compras.</p>
+    ${tabela(null)}
+    <p class="muted">A lista de compras é feita a partir deste cardápio. Depois, na aba Cardápio, você vê cada dia completo, com as bebidas.</p>
+    <button class="btn" id="aprova" style="width:100%;margin-top:10px">👍 Aprovar e ir para a compra</button>
+    <button class="btn ghost" id="muda" style="width:100%;margin-top:10px">Quero mudar meus gostos</button>`;
+  // Na aprovação, os botões dos dias da tabela não fazem nada (só mostram o nome do dia).
+  $app.querySelectorAll("[data-day]").forEach(b => b.disabled = true);
+  // Aprovar: guarda que esta semana foi aprovada e abre a lista de compras.
+  document.getElementById("aprova").onclick = () => { S.aprovado = true; S.tab = "preparar"; S.prep = "compra"; go(); window.scrollTo(0,0); toast("Cardápio aprovado ✓"); };
+  // Mudar: volta para a tela de gostos.
+  document.getElementById("muda").onclick = () => { S.tab = "gostos"; go(); window.scrollTo(0,0); };
+}
+
 // TELA CARDÁPIO: os botões dos dias, as 6 refeições do dia escolhido e os botões Comi/Troquei/Pulei.
 function cardapio(){
   // Se nenhum dia foi escolhido, abre no primeiro dia que ainda tem refeição sem marcar.
@@ -411,13 +445,7 @@ function cardapio(){
   // A primeira coluna (ícones) fica parada enquanto a tabela rola para o lado (position: sticky).
   // Tocar no nome de um dia abre esse dia logo abaixo, no dia a dia.
   // Cada célula ganha a cor do que foi marcado: verde = comi, amarelo = troquei, cinza = pulei.
-  html += `<div class="tab-wrap"><table class="semana">
-    <thead><tr><th></th>${WEEK.map((x,i) => `<th><button data-day="${i}" class="${i===d?"on":""}">${x.d}</button></th>`).join("")}</tr></thead>
-    <tbody>${MEALS.map((ml,j) => {
-      const [ic, nm] = ml.split("|");
-      return `<tr><th title="${nm}">${ic}</th>${CURTO.map((dia,i) => `<td class="st-${S.meals[mealKey(i,j)]||""}">${ajusta(dia[j])}</td>`).join("")}</tr>`;
-    }).join("")}</tbody></table></div>
-    <p class="muted" style="font-size:.8rem">☕ café · 🥤 lanche da manhã · 🍽️ almoço · 🥪 lanche da tarde · 🥗 janta · 🌙 ceia. Arraste a tabela para o lado.</p>`;
+  html += tabela(d);
   // DIA A DIA: os botões dos dias e as refeições completas do dia escolhido.
   html += `<h2>Dia a dia</h2>
     <p class="muted">Depois de cada refeição, marque o que aconteceu. O que você comeu sai do estoque sozinho.</p>
@@ -620,7 +648,7 @@ function ask(title, text, yes, label){
   document.getElementById("mYes").onclick = () => { m.classList.remove("show"); yes(); };
 }
 // TABS: as abas que existem. Usadas para ler o endereço (#inicio, #cardapio...).
-const TABS = ["inicio","gostos","preparar","cardapio","estoque","relatorio"];
+const TABS = ["inicio","gostos","aprovar","preparar","cardapio","estoque","relatorio"];
 // go(): salva, atualiza o endereço da página com a aba atual (#cardapio, por ex.) e redesenha.
 function go(){ save(); if (location.hash !== "#"+S.tab) { try { history.replaceState(null,"","#"+S.tab); } catch(e){} } render(); }
 // Liga os botões da barra de baixo: cada um troca de aba.
