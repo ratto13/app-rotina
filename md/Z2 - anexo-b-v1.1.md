@@ -1,7 +1,7 @@
 # Anexo B
 ## Registro das conversas do projeto
 
-**Versão 1.0** · Criado em 08/11/2026
+**Versão 1.1** · Criado em 08/11/2026 · Última atualização: 08/11/2026
 
 ---
 
@@ -50,12 +50,16 @@
 - **Itens antigos do Anexo A** passam para o formato do padrão junto com a ampliação do banco de dados.
 - **Regras de arquivos:** a versão vai no nome do arquivo; letra maiúscula no começo do nome para ordenar; a IA não adiciona nem apaga arquivos do Projeto e entrega o arquivo para o admin atualizar. *Aplicado nas instruções do Projeto e no arquivo do projeto v1.2.*
 - **Hospedagem:** GitHub Pages, sem Vercel por enquanto.
+- **Pasta `md` no GitHub:** os arquivos do método (manual, anexos, padrão e projeto) ficam na pasta `md`, junto com o site, e vão para o GitHub. O admin sabe que o repositório é público e que qualquer pessoa pode ver esses arquivos. Para esconder no futuro: arquivo `.gitignore` com a linha `md/` e o comando `git rm -r --cached md`.
+- **Nomes no Projeto:** letra maiúscula no começo para ordenar (A projeto, B manual, C padrão, Z1 Anexo A, Z2 Anexo B).
 
 **Não mudar**
 - **Guarda rápida com tomates, laranja e limão:** pedido avaliado e mantido como está no manual. Esses itens passam pela higienização (passo 5) antes de guardar, e os tomates vão para a fruteira.
 
 **Pendente**
 - Subir para o Projeto o **arquivo do projeto v1.2** e o **padrão v1.1**, se ainda não tiverem sido trocados.
+- **Arquivo do projeto v1.3:** incluir o Anexo B na lista de arquivos (seção 1), com os nomes Z1 e Z2, e citar a pasta `md` do repositório.
+- **Conferir a pasta do site:** `script.js`, `style.css` e `index.html` precisam ser as últimas versões entregues (a tela de perguntas tem o botão "Próxima pergunta").
 - **Próximo Anexo A:** converter os itens antigos para o padrão; fechar a lacuna do hambúrguer na seção A.7; ajustar a regra "guardadas cruas, sem tempero" da matriz (A.4.1), citando a exceção do moldado. *Conferir se o Anexo A 1.13 já fez isso.*
 - **Ampliar o "Do que você não gosta?"** quando o banco de dados estiver pronto: bebidas, frios, frutas e verduras, e por último os pratos do freezer.
 - **Trocar os `dados-semanaN.js`** para o formato do padrão quando o banco estiver pronto.
@@ -67,6 +71,7 @@
 - **O que a pessoa marca no site fica salvo só no celular e no navegador dela.** O admin só recebe o que vier pelo relatório.
 - **Para atualizar o site:** salvar os arquivos na pasta do projeto e rodar `git add .`, `git commit -m "o que mudou"` e `git push`. O GitHub Pages se atualiza sozinho em 1 ou 2 minutos.
 - **Na pasta do site, todos os arquivos ficam no mesmo nível**, sem subpastas, e sem espaços nem acentos nos nomes.
+- **Ao começar uma conversa nova,** ler o Anexo B primeiro para saber onde o projeto parou.
 - **Antes da página no GitHub,** existiu uma versão publicada como artefato no Claude. O endereço oficial para os testadores é o do GitHub Pages.
 
 ---
@@ -76,3 +81,4 @@
 | Versão | Data | Alteração |
 | --- | --- | --- |
 | 1.0 | 08/11/2026 | Criação: regras do registro e o primeiro registro (site de teste, Semana 2, padrão do banco de dados e manual 3.16) |
+| 1.1 | 08/11/2026 | Fim da conversa de 08/11: pasta `md` no GitHub, nomes Z1 e Z2 no Projeto, pendências do arquivo do projeto v1.3 e da conferência da pasta do site, lembrete de ler o Anexo B no começo de cada conversa |
