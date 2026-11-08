@@ -26,6 +26,9 @@ const FREEZER = {
 // MEALS: as 6 refeições do dia, com ícone e nome separados por "|".
 const MEALS = ["☕|Café da manhã","🥤|Lanche da manhã","🍽️|Almoço","🥪|Lanche da tarde","🥗|Janta","🌙|Ceia"];
 
+// EMAIL: para onde os relatórios das pessoas do teste são enviados.
+const EMAIL = "menumodular@gmail.com";
+
 // DAILY: itens comprados toda semana, mesmo que ainda tenha em casa.
 const DAILY = ["Leite","Ovos","Pão de forma","Torrada"];
 
@@ -103,9 +106,30 @@ function ajusta(t){
   }
   return t;
 }
+// REFEIÇÕES POR DIA: o método foi pensado para 6, mas a pessoa pode escolher 5, 4 ou 3.
+// ATIVAS diz quais refeições aparecem (pela posição em MEALS: 0 café, 1 lanche da manhã,
+// 2 almoço, 3 lanche da tarde, 4 janta, 5 ceia).
+// Com 4 ou 3, o lanche da manhã sai, mas a vitamina passa para o café, para não sobrar kit no freezer.
+const ATIVAS = {6:[0,1,2,3,4,5], 5:[0,1,2,3,4], 4:[0,2,3,4], 3:[0,2,4]};
+const nRef = () => G.refeicoes || 6;
+const ativas = () => ATIVAS[nRef()];
+const vitNoCafe = () => nRef() <= 4;
+// texto(): o texto de uma refeição já com os gostos e, no café, com a vitamina quando ela mudou de lugar.
+function texto(t, i, curto){
+  t = ajusta(t);
+  if (i === 0 && vitNoCafe()) t += curto ? " + vitamina" : ", e vitamina de frutas";
+  return t;
+}
+// usos(): o que uma refeição tira do freezer. O café leva junto o kit de vitamina quando ele mudou de lugar.
+function usos(d, i){
+  const u = Object.assign({}, WEEK[d].m[i][1]);
+  if (i === 0 && vitNoCafe()) for (const k in WEEK[d].m[1][1]) u[k] = (u[k]||0) + WEEK[d].m[1][1][k];
+  return u;
+}
+
 // trocas(): conta quantas refeições da semana mudaram com os gostos.
 function trocas(){
-  let n = 0; WEEK.forEach(w => w.m.forEach(m => { if (ajusta(m[0]) !== m[0]) n++; })); return n;
+  let n = 0; WEEK.forEach(w => ativas().forEach(i => { if (ajusta(w.m[i][0]) !== w.m[i][0]) n++; })); return n;
 }
 // shopList(): a lista de compras sem os itens de que a pessoa não gosta.
 function shopList(){
@@ -131,7 +155,10 @@ const cozDone = () => allCoz.filter(i => S.done[i.id]).length;
 // mealKey(): cria a chave de uma refeição, juntando dia e refeição. Ex.: "1-2" = terça, almoço.
 const mealKey = (d,m) => d+"-"+m;
 // mealCount(): conta quantas refeições estão com um certo estado (comi, troq ou pulei).
-function mealCount(st){ let c=0; for (const k in S.meals) if (S.meals[k]===st) c++; return c; }
+// Só conta as refeições que estão ativas (as que a pessoa escolheu fazer).
+function mealCount(st){ let c=0; WEEK.forEach((w,d) => ativas().forEach(i => { if (S.meals[mealKey(d,i)]===st) c++; })); return c; }
+// totalRef(): quantas refeições a semana tem, de acordo com a escolha (6 por dia = 42).
+const totalRef = () => 7 * ativas().length;
 
 // stock(): calcula o freezer.
 // 1) Começa com tudo em zero.
@@ -140,7 +167,7 @@ function mealCount(st){ let c=0; for (const k in S.meals) if (S.meals[k]===st) c
 function stock(){
   const s = {}; Object.keys(FREEZER).forEach(k => s[k] = inicial()[k] || 0);
   [...allArm, ...allCoz].forEach(it => { if (S.done[it.id] && it.adds) for (const k in it.adds) s[k]+=it.adds[k]; });
-  WEEK.forEach((w,d) => w.m.forEach((m,i) => { if (S.meals[mealKey(d,i)]==="comi") for (const k in m[1]) s[k]-=m[1][k]; }));
+  WEEK.forEach((w,d) => ativas().forEach(i => { if (S.meals[mealKey(d,i)]==="comi") { const u = usos(d,i); for (const k in u) s[k]-=u[k]; } }));
   return s;
 }
 // inicial(): o que já estava no freezer no começo da semana.
@@ -174,10 +201,10 @@ function render(){
 
 // TELA INÍCIO: o texto de boas-vindas, as etapas com barra de progresso e as palavras do método.
 function inicio(){
-  const tot = 42, comi = mealCount("comi");
+  const tot = totalRef(), comi = mealCount("comi");
   // Cada etapa é [ícone, título, texto, porcentagem, aba de destino, sub-aba].
   const steps = [
-    ["🧭","Entender o cardápio e seus gostos",G._visto ? "Feito"+(trocas() ? " · "+trocas()+" refeições ajustadas" : "") : "Comece por aqui",G._visto?100:0,"gostos",null],
+    ["🧭","Entender o cardápio e seus gostos",G._visto ? "Feito · "+nRef()+" refeições por dia"+(trocas() ? " · "+trocas()+" ajustes" : "") : "Comece por aqui",G._visto?100:0,"gostos",null],
     ["👍","Aprovar o cardápio",S.aprovado ? "Aprovado" : "Veja a semana antes da compra",S.aprovado?100:0,"aprovar",null],
     ["🛒","Fazer a compra",`${shopDone()} de ${allShop().length} itens`,pct(shopDone(),allShop().length),"preparar","compra"],
     ["🧊","Guardar a compra",`${armDone()} de ${allArm.length} etapas`,pct(armDone(),allArm.length),"preparar","guardar"],
@@ -229,7 +256,7 @@ function gostos(){
     </div>
 
     <h2>🕒 Seis refeições, de 3 em 3 horas</h2>
-    <p>Café da manhã, lanche da manhã, almoço, lanche da tarde, janta e ceia. Comer de 3 em 3 horas evita chegar com muita fome na refeição seguinte.</p>
+    <p>O método foi pensado para <b>6 refeições por dia</b>: café da manhã, lanche da manhã, almoço, lanche da tarde, janta e ceia. Comer de 3 em 3 horas evita chegar com muita fome na refeição seguinte e ajuda a comer a proteína do dia.</p>
 
     <h2>🧩 Cada prato é montado com peças</h2>
     <p>Todo prato junta uma peça que dá <b>energia</b> (arroz, pão, tapioca, macarrão), uma de <b>proteína</b> (frango, carne, ovo, queijo) e, no almoço e na janta, <b>legumes ou salada</b>. Como as peças têm o mesmo papel, uma pode entrar no lugar da outra sem desequilibrar o prato.</p>
@@ -256,6 +283,17 @@ function gostos(){
       <li>De uma semana para a outra, os almoços e as jantas mudam.</li>
     </ul>
 
+    <h2>🍽️ Quantas refeições por dia você quer fazer?</h2>
+    <p class="muted">Se 6 for demais para a sua rotina, dá para fazer menos. A página junta ou tira refeições para caber no seu dia.</p>
+    <div class="card" style="padding:4px 12px">
+      ${[[6,"6 refeições (recomendado)","Café, lanche da manhã, almoço, lanche da tarde, janta e ceia."],
+         [5,"5 refeições","Sem a ceia."],
+         [4,"4 refeições","Sem a ceia e sem o lanche da manhã. A vitamina passa para o café."],
+         [3,"3 refeições","Só café, almoço e janta. A vitamina passa para o café, e a torta do lanche fica guardada no freezer para as próximas semanas."]]
+        .map(([n,t,dsc]) => `<div class="chk ${nRef()===n?"on":""}" data-ref="${n}"><div class="box" style="border-radius:50%">${nRef()===n?"✓":""}</div><div class="lbl" style="text-decoration:none;color:var(--ink)"><b>${t}</b><div class="muted" style="font-size:.85rem">${dsc}</div></div></div>`).join("")}
+    </div>
+    ${nRef() < 6 ? `<p class="muted" style="font-size:.88rem">Com menos refeições, fica mais difícil comer toda a proteína do dia. Nesta versão de teste, a lista de compras não muda: o que sobrar fica na despensa ou no freezer para a próxima semana.</p>` : ""}
+
     <h2>👎 Do que você não gosta?</h2>
     <p class="muted">Marque o que não quer no cardápio. A página troca por outra peça do mesmo papel e tira o item da lista de compras.</p>
     ${grupos.map(gr => `<div class="sub-t">${gr}</div><div class="card" style="padding:4px 12px">
@@ -265,6 +303,10 @@ function gostos(){
     <div class="card" style="background:var(--green-l);border-color:#BFD9C7">${trocas() ? `<b>✓ ${trocas()} refeições ajustadas</b> aos seus gostos.` : "Nenhuma troca: o cardápio fica como foi planejado."}</div>
     <p class="muted" style="font-size:.88rem"><b>O que não muda nesta versão de teste:</b> os pratos do freezer, as frutas e as saladas, porque eles mudam a compra e a cozinha da semana inteira.</p>
     <button class="btn" id="pronto" style="width:100%;margin-top:8px">Pronto, ver meu cardápio ›</button>`;
+  // Escolher quantas refeições por dia: salva e redesenha a tela.
+  $app.querySelectorAll("[data-ref]").forEach(el => el.onclick = () => {
+    G.refeicoes = +el.dataset.ref; saveGostos(); const y = window.scrollY; gostos(); window.scrollTo(0,y);
+  });
   // Marcar ou desmarcar um "não gosto": salva, e a tela se redesenha com o novo número de trocas.
   $app.querySelectorAll("[data-g]").forEach(el => el.onclick = () => {
     G[el.dataset.g] = !G[el.dataset.g]; saveGostos(); const y = window.scrollY; gostos(); window.scrollTo(0,y);
@@ -403,11 +445,11 @@ function bindItems(){
 function tabela(d){
   return `<div class="tab-wrap"><table class="semana">
     <thead><tr><th></th>${WEEK.map((x,i) => `<th><button data-day="${i}" class="${i===d?"on":""}">${x.d}</button></th>`).join("")}</tr></thead>
-    <tbody>${MEALS.map((ml,j) => {
-      const [ic, nm] = ml.split("|");
-      return `<tr><th title="${nm}">${ic}</th>${CURTO.map((dia,i) => `<td class="st-${S.meals[mealKey(i,j)]||""}">${ajusta(dia[j])}</td>`).join("")}</tr>`;
+    <tbody>${ativas().map(j => {
+      const [ic, nm] = MEALS[j].split("|");
+      return `<tr><th title="${nm}">${ic}</th>${CURTO.map((dia,i) => `<td class="st-${S.meals[mealKey(i,j)]||""}">${texto(dia[j], j, true)}</td>`).join("")}</tr>`;
     }).join("")}</tbody></table></div>
-    <p class="muted" style="font-size:.8rem">☕ café · 🥤 lanche da manhã · 🍽️ almoço · 🥪 lanche da tarde · 🥗 janta · 🌙 ceia. Arraste a tabela para o lado.</p>`;
+    <p class="muted" style="font-size:.8rem">${ativas().map(j => { const [ic, nm] = MEALS[j].split("|"); return ic+" "+nm.toLowerCase(); }).join(" · ")}. Arraste a tabela para o lado.</p>`;
 }
 
 // TELA APROVAR: mostra o cardápio da semana, já com os gostos, para a pessoa aprovar antes da compra.
@@ -415,7 +457,7 @@ function tabela(d){
 function aprovar(){
   $app.innerHTML = `<span class="pill">Semana ${SEMANA.num}</span>
     <h1>Seu cardápio da semana</h1>
-    <p>Este é o cardápio montado para você${trocas() ? `, com <b>${trocas()} refeições ajustadas</b> aos seus gostos` : ""}. Dê uma olhada: se estiver do seu gosto, aprove e siga para a lista de compras.</p>
+    <p>Este é o cardápio montado para você, com <b>${nRef()} refeições por dia</b>${trocas() ? ` e <b>${trocas()} refeições ajustadas</b> aos seus gostos` : ""}. Dê uma olhada: se estiver do seu gosto, aprove e siga para a lista de compras.</p>
     ${tabela(null)}
     <p class="muted">A lista de compras é feita a partir deste cardápio. Depois, na aba Cardápio, você vê cada dia completo, com as bebidas.</p>
     <button class="btn" id="aprova" style="width:100%;margin-top:10px">👍 Aprovar e ir para a compra</button>
@@ -432,7 +474,7 @@ function aprovar(){
 function cardapio(){
   // Se nenhum dia foi escolhido, abre no primeiro dia que ainda tem refeição sem marcar.
   if (S.day===null){
-    S.day = WEEK.findIndex((w,d) => w.m.some((m,i) => !S.meals[mealKey(d,i)]));
+    S.day = WEEK.findIndex((w,d) => ativas().some(i => !S.meals[mealKey(d,i)]));
     if (S.day<0) S.day = 6;
   }
   const d = S.day, w = WEEK[d];
@@ -450,16 +492,17 @@ function cardapio(){
   html += `<h2>Dia a dia</h2>
     <p class="muted">Depois de cada refeição, marque o que aconteceu. O que você comeu sai do estoque sozinho.</p>
     <div class="days">${WEEK.map((x,i) => {
-      const n = x.m.filter((m,j) => S.meals[mealKey(i,j)]).length;
-      return `<button data-day="${i}" class="${i===d?"on":""}">${x.d}<small>${n}/6</small></button>`;}).join("")}</div>
+      const n = ativas().filter(j => S.meals[mealKey(i,j)]).length;
+      return `<button data-day="${i}" class="${i===d?"on":""}">${x.d}<small>${n}/${ativas().length}</small></button>`;}).join("")}</div>
     <h2 style="margin-top:8px" id="dia">${w.n}</h2>`;
   // Cria um cartão para cada refeição. split("|") separa o ícone do nome.
-  w.m.forEach((m,i) => {
+  ativas().forEach(i => {
+    const m = w.m[i];
     const st = S.meals[mealKey(d,i)] || "";
     const [ic, nm] = MEALS[i].split("|");
     html += `<div class="card meal st-${st}">
       <div class="mi">${ic}</div>
-      <div class="grow"><div class="nm">${nm}</div><div>${esc(ajusta(m[0]))}</div>
+      <div class="grow"><div class="nm">${nm}</div><div>${esc(texto(m[0], i))}</div>
         <div class="acts">
           <button class="comi ${st==="comi"?"on":""}" data-m="${i}" data-s="comi">✓ Comi</button>
           <button class="troq ${st==="troq"?"on":""}" data-m="${i}" data-s="troq">↔ Troquei</button>
@@ -534,7 +577,7 @@ function relatorio(){
       ${linha("🛒 Compra", shopDone()+" de "+allShop().length+" itens")}
       ${linha("🧊 Guardar", armDone()+" de "+allArm.length+" etapas")}
       ${linha("🍳 Cozinha", cozDone()+" de "+allCoz.length+" preparos")}
-      ${linha("✓ Refeições comidas", mealCount("comi")+" de 42")}
+      ${linha("✓ Refeições comidas", mealCount("comi")+" de "+totalRef())}
       ${linha("↔ Trocadas", mealCount("troq"))}
       ${linha("– Puladas", mealCount("pulei"))}
     </div>
@@ -556,20 +599,28 @@ function relatorio(){
 
     <h2>Enviar</h2>
     <pre class="rep" id="rep"></pre>
-    <button class="btn" id="copy" style="width:100%">📋 Copiar relatório</button>
-    <p class="muted" style="text-align:center">Depois de copiar, cole no WhatsApp e envie.</p>
+    <a class="btn" id="mail" style="display:block;text-align:center;text-decoration:none">📧 Enviar por e-mail</a>
+    <button class="btn ghost" id="copy" style="width:100%;margin-top:10px">📋 Copiar relatório</button>
+    <p class="muted" style="text-align:center">O relatório vai para <b>${EMAIL}</b>. Se o botão não abrir o seu e-mail, copie o relatório e cole numa mensagem para esse endereço.</p>
     ${SEMANA.proxima ? `<h2>Próxima semana</h2>
       <div class="card" style="background:var(--green-l);border-color:#BFD9C7">
         <p>Enviou o relatório? Então é hora de começar a <b>Semana ${SEMANA.num+1}</b>. Ela começa com o que sobrou no seu freezer.</p>
         <button class="btn" id="next" style="width:100%;margin-top:10px">Começar a Semana ${SEMANA.num+1} ›</button>
       </div>` : ""}`;
   // upd(): atualiza o texto do relatório na tela.
-  const upd = () => document.getElementById("rep").textContent = reportText();
+  // Também atualiza o link do botão de e-mail. mailto: abre o aplicativo de e-mail
+  // com o destinatário, o assunto e o texto já preenchidos (encodeURIComponent prepara o texto para o link).
+  const upd = () => {
+    const t = reportText();
+    document.getElementById("rep").textContent = t;
+    document.getElementById("mail").href = "mailto:"+EMAIL+"?subject="+encodeURIComponent("Relatório da Semana "+SEMANA.num+(r.nome ? " · "+r.nome : ""))+"&body="+encodeURIComponent(t);
+  };
   upd();
   // Cada campo salva o que foi digitado (oninput dispara a cada letra) e atualiza o relatório.
   $app.querySelectorAll("[data-t]").forEach(el => el.oninput = () => { r[el.dataset.t] = el.value; save(); upd(); });
   $app.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { r[b.dataset.f] = r[b.dataset.f]===b.dataset.v ? "" : b.dataset.v; save(); const y=window.scrollY; relatorio(); window.scrollTo(0,y); });
   document.getElementById("copy").onclick = () => copyText(reportText());
+  document.getElementById("mail").onclick = () => { S.rep.sent = true; save(); };
   // Botão da próxima semana: guarda as sobras do freezer (para a semana seguinte começar com elas)
   // e abre a página da próxima semana. As marcações desta semana continuam salvas.
   const nx = document.getElementById("next");
@@ -595,16 +646,17 @@ function reportText(){
   L.push("Compra: "+shopDone()+" de "+allShop().length+" itens");
   L.push("Guardar: "+armDone()+" de "+allArm.length+" etapas");
   L.push("Cozinha: "+cozDone()+" de "+allCoz.length+" preparos");
-  L.push("Refeições: "+mealCount("comi")+" comidas, "+mealCount("troq")+" trocadas, "+mealCount("pulei")+" puladas (de 42)");
+  L.push("Refeições: "+mealCount("comi")+" comidas, "+mealCount("troq")+" trocadas, "+mealCount("pulei")+" puladas (de "+totalRef()+")");
   // Uma linha por dia: ✓ comi, ↔ troquei, – pulei, · sem marcar.
   WEEK.forEach((w,d) => {
-    const marks = w.m.map((m,i) => ({comi:"✓",troq:"↔",pulei:"–"})[S.meals[mealKey(d,i)]] || "·").join(" ");
+    const marks = ativas().map(i => ({comi:"✓",troq:"↔",pulei:"–"})[S.meals[mealKey(d,i)]] || "·").join(" ");
     L.push("   "+w.d+": "+marks);
   });
   L.push("Gasto na compra: "+(r.gasto ? "R$ "+r.gasto : "—"));
   L.push("Tempo para guardar: "+(r.tguardar||"—"));
   L.push("Tempo de cozinha: "+(r.tcozinha||"—"));
   L.push("Rotina: "+(r.rotina||"—"));
+  L.push("Refeições por dia: "+nRef());
   L.push("Não gosta de: "+(GOSTOS.filter(o => naoGosta(o.id)).map(o => o.n.toLowerCase()).join(", ") || "nada marcado"));
   L.push("Sobrou no freezer: "+(sobras.length ? sobras.join(", ") : "nada"));
   L.push("Pouco ou acabou: "+(pouco.length ? pouco.join(", ") : "nada"));
