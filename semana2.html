@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<!-- viewport: faz a página caber na largura do celular, sem precisar dar zoom. -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Método Modular · Semana 2</title>
+<!-- Fonte Nunito, carregada do Google Fonts. Sem internet, o navegador usa a fonte padrão. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!-- O visual da página fica no arquivo style.css. -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Área principal: fica vazia aqui. O script.js desenha cada tela dentro dela. -->
+<div class="wrap" id="app"></div>
+
+<!-- Barra de botões de baixo. O data-tab diz qual aba cada botão abre. -->
+<nav class="bot"><div class="in">
+  <button data-tab="inicio"><span>🏠</span>Início</button>
+  <button data-tab="preparar"><span>🧺</span>Preparar</button>
+  <button data-tab="cardapio"><span>🍽️</span>Cardápio</button>
+  <button data-tab="estoque"><span>📦</span>Estoque</button>
+  <button data-tab="relatorio"><span>📝</span>Relatório</button>
+</div></nav>
+
+<!-- Janelinha de confirmação (usada no "Recomeçar do zero"). Começa escondida. -->
+<div class="modal" id="modal"><div class="card">
+  <h3 id="mTitle"></h3><p id="mText" class="muted"></p>
+  <div class="row" style="margin-top:14px;justify-content:flex-end">
+    <button class="btn ghost small" id="mNo">Cancelar</button>
+    <button class="btn warn small" id="mYes">Sim, apagar</button>
+  </div>
+</div></div>
+<!-- Mensagem rápida (ex.: "Feito ✓"). Começa invisível. -->
+<div class="toast" id="toast"></div>
+
+<!-- Primeiro os dados da semana (dados-semana2.js), depois a lógica (script.js), que usa esses dados.
+     Eles vêm por último para o HTML já existir quando o código rodar. -->
+<script src="dados-semana2.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

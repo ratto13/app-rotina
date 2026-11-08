@@ -1,0 +1,92 @@
+/* Variáveis de cor, as mesmas da página da Semana 1:
+   bg = creme #FBF7F0, ink = quase preto #2B2A28, soft = cinza quente #6E6A63,
+   line = bege das bordas #ECE5D9, green = verde-folha #3F7D58, tomato = laranja-tomate #D9622B.
+   O sufixo -l é a versão clarinha da cor. */
+:root{
+  --bg:#FBF7F0; --card:#FFFFFF; --ink:#2B2A28; --soft:#6E6A63; --line:#ECE5D9;
+  --green:#3F7D58; --green-d:#2F6145; --green-l:#E4F0E7; --tomato:#D9622B; --tomato-l:#FBE7DC; --sun-l:#FDF3DA;
+}
+
+/* box-sizing: a largura de cada caixa já inclui a borda e o espaço interno. */
+*{box-sizing:border-box}
+
+/* Página inteira: fundo, cor do texto e fonte. */
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px;line-height:1.5}
+h1,h2,h3{margin:0;line-height:1.2}
+p{margin:0}
+
+/* .caixa: centraliza o conteúdo e limita a largura em telas grandes. */
+.caixa{max-width:960px;margin:0 auto;padding:0 20px}
+
+/* Botões: .botao é o verde principal; .pequeno é a versão menor do topo; .claro-btn é o branco da chamada final. */
+.botao{display:inline-block;background:var(--green);color:#fff;text-decoration:none;font-weight:800;padding:14px 22px;border-radius:14px;transition:background .2s}
+.botao:hover{background:var(--green-d)}
+.botao.pequeno{padding:8px 14px;font-size:.9rem;border-radius:10px}
+.botao.claro-btn{background:#fff;color:var(--green)}
+
+/* TOPO: fica grudado no alto da tela ao rolar (position: sticky). */
+.topo{position:sticky;top:0;background:rgba(251,247,240,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:5}
+.topo-in{display:flex;align-items:center;justify-content:space-between;height:60px}
+.marca{font-weight:800;font-size:1.05rem}
+
+/* CAPA: área de abertura, com título grande. clamp() deixa a fonte crescer com a tela, entre um mínimo e um máximo. */
+.capa{padding:56px 0 48px}
+.etiqueta{display:inline-block;background:var(--green-l);color:var(--green);font-weight:800;font-size:.82rem;padding:5px 12px;border-radius:99px;margin-bottom:16px}
+.capa h1{font-size:clamp(2rem,6vw,3.2rem);font-weight:800;margin-bottom:16px}
+.destaque{font-size:1.12rem;color:var(--soft);max-width:600px;margin-bottom:26px}
+.nota{color:var(--soft);font-size:.88rem;margin-top:12px}
+
+/* BLOCOS: cada seção da página. .claro tem fundo branco, para alternar com o creme. */
+.bloco{padding:52px 0}
+.bloco.claro{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.bloco h2{font-size:clamp(1.5rem,4vw,2rem);font-weight:800;margin-bottom:10px}
+.sub{color:var(--soft);max-width:640px;margin-bottom:24px}
+.bloco > .caixa > h2 + .grade{margin-top:20px}
+
+/* GRADE: organiza os cartões lado a lado. No celular fica 1 coluna; a partir de 700px, 3 colunas. */
+.grade{display:grid;gap:14px}
+@media (min-width:700px){ .grade.tres{grid-template-columns:repeat(3,1fr)} }
+
+/* CARTÕES: caixas brancas com ícone, título e texto. .borda adiciona uma faixa verde no alto. */
+.cartao{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
+.cartao.borda{border-top:4px solid var(--green)}
+.cartao .icone{font-size:1.8rem;display:block;margin-bottom:8px}
+.cartao h3{font-size:1.08rem;margin-bottom:6px}
+.cartao p{color:var(--soft)}
+
+/* PASSOS: a lista numerada do "Como funciona". list-style:none tira os números padrão,
+   porque os números aparecem dentro dos círculos (.num). No computador, vira 2 colunas. */
+.passos{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+@media (min-width:700px){ .passos{grid-template-columns:repeat(2,1fr)} }
+.passos li{display:flex;gap:14px;background:var(--bg);border-radius:18px;padding:18px}
+.num{flex:none;width:40px;height:40px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;display:grid;place-items:center;font-size:1.1rem}
+.passos h3{margin:6px 0 4px}
+.passos p{color:var(--soft)}
+
+/* VANTAGENS: lista com um ícone à esquerda de cada linha. */
+.vantagens{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:12px;max-width:680px}
+.vantagens li{display:flex;gap:14px;align-items:flex-start}
+.vantagens span{font-size:1.4rem;width:32px;flex:none;text-align:center}
+
+/* NÍVEIS: 4 cartões em fileira. No celular rolam para o lado (overflow-x: auto). */
+.niveis{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(200px,1fr);gap:12px;overflow-x:auto;padding-bottom:6px}
+.nivel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.nivel .n{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--sun-l);font-weight:800;margin-bottom:10px}
+.nivel h3{font-size:1rem;margin-bottom:4px}
+.nivel p{color:var(--soft);font-size:.92rem}
+
+/* DÚVIDAS: cada pergunta é um <details>. summary é a pergunta; o "+" vira "–" quando abre. */
+.duvida{border-bottom:1px solid var(--line);padding:4px 0;max-width:720px}
+.duvida summary{list-style:none;cursor:pointer;font-weight:700;padding:14px 30px 14px 0;position:relative}
+.duvida summary::-webkit-details-marker{display:none}
+.duvida summary::after{content:"+";position:absolute;right:4px;top:10px;font-size:1.4rem;color:var(--green)}
+.duvida[open] summary::after{content:"–"}
+.duvida p{color:var(--soft);padding:0 0 16px}
+
+/* CHAMADA FINAL: faixa verde com o botão branco. */
+.final{background:var(--green);color:#fff;padding:56px 0;text-align:center}
+.final h2{font-size:clamp(1.5rem,4vw,2rem);margin-bottom:10px}
+.final p{opacity:.9;margin-bottom:22px}
+
+/* RODAPÉ */
+.rodape{padding:24px 0;color:var(--soft);font-size:.85rem;text-align:center}
