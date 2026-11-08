@@ -192,4 +192,4 @@ const CURTO = [
 
 // BASE: itens da geladeira e da despensa que a pessoa marca como tem, pouco ou acabou.
 // Na Semana 2, o peito de peru entra no lugar do presunto.
-const BASE = ["Arroz","Feijão","Espaguete","Farinha de trigo","Fubá","Tapioca","Flocão de milho","Farelo de aveia","Fermento","Açúcar","Café solúvel","Achocolatado","Farinha láctea","Torrada","Pão de forma","Leite","Ovos","Manteiga","Muçarela","Peito de peru","Parmesão ralado","Atum","Óleo","Azeite","Sal","Pimenta-do-reino","Molho de salada pronto","Maionese"];
+const BASE = ["Arroz","Feijão","Espaguete","Farinha de trigo","Fubá","Tapioca","Flocão de milho","Farelo de aveia","Fermento","Açúcar","Café solúvel","Achocolatado","Farinha láctea","Torrada","Pão de forma","Leite","Ovos","Manteiga","Muçarela","Peito de peru","Parmesão ralado","Atum","Óleo","Azeite","Sal","Pimenta-do-reino","Orégano","Molho de salada pronto","Maionese"];

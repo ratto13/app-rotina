@@ -27,10 +27,10 @@ const SHOP = [
   {s:"Folhas", i:["Repolho: 1 unidade","Alface: 1 unidade"]}]},
  {sec:"🥫 Mercearia", g:[
   {s:"Grãos e massas", i:["Arroz: 1 kg","Feijão carioca: 1 kg","Espaguete: 500 g"]},
-  {s:"Farinhas", i:["Farinha de trigo: 1 kg","Fubá: 1 kg","Tapioca (goma): 1 kg","Farelo de aveia: 1 pacote","Fermento químico: 1 pote","Açúcar: 1 kg","Flocão de milho: 500 g"]},
-  {s:"Matinais", i:["Café solúvel: 1 pote","Achocolatado: 1 lata","Farinha láctea: 1 lata","Torrada: 1 pacote","Pão de forma: 1 pacote"]},
-  {s:"Leite e ovos", i:["Leite integral: 7 litros","Ovos: 40 unidades"]},
-  {s:"Óleos e temperos", i:["Óleo: 1 garrafa","Azeite: 1 garrafa","Sal: 1 pacote","Pimenta-do-reino: 1 pote","Molho de salada pronto: 2 frascos, de sabores diferentes","Maionese: 1 pote"]},
+  {s:"Farinhas", i:["Farinha de trigo: 1 kg","Fubá: 1 kg","Tapioca (goma): 1 kg","Farelo de aveia: 1 pacote","Fermento químico: 1 pote","Flocão de milho: 500 g"]},
+  {s:"Matinais", i:["Café solúvel: 1 pote","Achocolatado: 1 lata","Farinha láctea: 1 lata","Torrada: 1 pacote","Pão de forma: 1 pacote","Açúcar: 1 kg"]},
+  {s:"Leite e ovos", i:["Leite integral: 7 litros","Ovos: 36 unidades"]},
+  {s:"Óleos e temperos", i:["Óleo: 1 garrafa","Azeite: 1 garrafa","Sal: 1 pacote","Pimenta-do-reino: 1 pote","Orégano: 1 pacote","Molho de salada pronto: 2 frascos, de sabores diferentes","Maionese: 1 pote"]},
   {s:"Enlatados", i:["Atum: 2 latas"]}]},
  {sec:"🥩 Açougue", g:[{s:"", i:["Peito de frango: 1 kg","Acém moído: 1 kg"]}]},
  {sec:"🧊 Resfriados", g:[{s:"", i:["Calabresa: 250 g","Muçarela: 200 g","Parmesão ralado: 1 pacote","Manteiga: 200 g","Presunto: 200 g","Polpa de fruta congelada: 4 pacotes de 100 g"]}]}
@@ -50,7 +50,7 @@ const ARM = [
   {id:"frios", name:"Muçarela, presunto e parmesão ralado", text:"Passe para o pote.", d:[["Queijos e frios","Guarde na geladeira."],["Potes","3 potes da praça."]]}
  ]},
  {icon:"🗄️", t:"Guardar o resto da compra", items:[
-  {id:"base", name:"Secos, refrigerados e congelados", text:"Guarde conforme a sua organização.", d:[["Itens","Ovos, manteiga, polpa de fruta (no freezer), arroz, feijão, espaguete, farinha de trigo, fubá, tapioca, flocão de milho, farelo de aveia, fermento, açúcar, café solúvel, achocolatado, farinha láctea, torrada, pão de forma, leite, atum, óleo, azeite, sal, pimenta-do-reino, molho de salada pronto e maionese."]], adds:{polpa:4}}
+  {id:"base", name:"Secos, refrigerados e congelados", text:"Guarde conforme a sua organização.", d:[["Itens","Ovos, manteiga, polpa de fruta (no freezer), arroz, feijão, espaguete, farinha de trigo, fubá, tapioca, flocão de milho, farelo de aveia, fermento, café solúvel, achocolatado, farinha láctea, torrada, pão de forma, açúcar, leite, atum, óleo, azeite, sal, pimenta-do-reino, orégano, molho de salada pronto e maionese."]], adds:{polpa:4}}
  ]},
  {icon:"🧽", t:"Limpar a praça", items:[
   {id:"praca", name:"Bancada, pia e utensílios", text:"Limpe tudo antes de começar a higienização. É isso que o método chama de limpar a praça: deixar o espaço de trabalho pronto antes de mexer nos alimentos."}
@@ -119,10 +119,10 @@ const ESPERADO = [
   "1x pote da praça de alface","1x pote da praça de repolho","1x pote da praça de cenoura ralada, com cerca de 240 g",
   "1x pote da praça de maçã, com cerca de 790 g","1x pote da praça de mamão picado, com cerca de 440 g",
   "1x pote da praça de muçarela","1x pote da praça de presunto","1x pote da praça de parmesão ralado",
-  "1x pote da praça de crisps de calabresa","36 ovos","Manteiga"]},
+  "1x pote da praça de crisps de calabresa","32 ovos","Manteiga"]},
  {icon:"🍋", local:"Gaveta da geladeira", itens:["1 kg de laranja","500 g de limão"]},
  {icon:"🍌", local:"Fruteira", itens:["Cerca de 900 g de tomate para salada","Cerca de 1,3 kg de banana"]},
- {icon:"🗄️", local:"Despensa", itens:["Arroz, feijão, espaguete, farinha de trigo, fubá, tapioca, flocão de milho, farelo de aveia, fermento, açúcar, café solúvel, achocolatado, farinha láctea, torrada, pão de forma, leite, atum, óleo, azeite, sal, pimenta-do-reino, molho de salada pronto e maionese"]}
+ {icon:"🗄️", local:"Despensa", itens:["Arroz, feijão, espaguete, farinha de trigo, fubá, tapioca, flocão de milho, farelo de aveia, fermento, café solúvel, achocolatado, farinha láctea, torrada, pão de forma, açúcar, leite, atum, óleo, azeite, sal, pimenta-do-reino, orégano, molho de salada pronto e maionese"]}
 ];
 const ESPERADO_TOTAL = "37 potes de porção, 9 potes da praça, 10 saquinhos, cerca de 2 forminhas de gelo e 4 polpas.";
 
@@ -196,4 +196,4 @@ const CURTO = [
 ];
 
 // BASE: itens da geladeira e da despensa que a pessoa marca como tem, pouco ou acabou.
-const BASE = ["Arroz","Feijão","Espaguete","Farinha de trigo","Fubá","Tapioca","Flocão de milho","Farelo de aveia","Fermento","Açúcar","Café solúvel","Achocolatado","Farinha láctea","Torrada","Pão de forma","Leite","Ovos","Manteiga","Muçarela","Presunto","Parmesão ralado","Atum","Óleo","Azeite","Sal","Pimenta-do-reino","Molho de salada pronto","Maionese"];
+const BASE = ["Arroz","Feijão","Espaguete","Farinha de trigo","Fubá","Tapioca","Flocão de milho","Farelo de aveia","Fermento","Açúcar","Café solúvel","Achocolatado","Farinha láctea","Torrada","Pão de forma","Leite","Ovos","Manteiga","Muçarela","Presunto","Parmesão ralado","Atum","Óleo","Azeite","Sal","Pimenta-do-reino","Orégano","Molho de salada pronto","Maionese"];
