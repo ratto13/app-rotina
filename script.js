@@ -353,14 +353,14 @@ function tabela(d){
 // TELA APROVAR: mostra o cardápio da semana para a pessoa aprovar antes da compra.
 // É o mesmo passo do manual: a lista de compras só vem depois que o cardápio é confirmado.
 // Na Semana 1, o cardápio é o montado pelo monta.js com as escolhas da pessoa.
-// Se faltarem potes da praça, a tela avisa (SEMANA.avisoPraca).
+// Se faltarem potes (de porção ou da praça), a tela avisa (SEMANA.avisoPraca, montado no monta.js).
 function aprovar(){
   $app.innerHTML = `<span class="pill">Semana ${SEMANA.num}</span>
     <h1>Seu cardápio da semana</h1>
     ${typeof MONTADA !== "undefined" && MONTADA
       ? `<div class="card" style="background:var(--green-l);border-color:#BFD9C7"><b>🧩 Montado com o que você escolheu</b><p>Cardápio para <b>${fmtPorcao(porcoesCasa())}</b>, só com os alimentos que você marcou. A lista de compras, o guardar e a cozinha saem dele.</p></div>`
       : `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8"><b>Modelo da semana</b><p>Este é o cardápio de exemplo. Responda as perguntas para montar o seu.</p></div>`}
-    ${SEMANA.avisoPraca ? `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8"><b>🫙 Potes da praça</b><p>${SEMANA.avisoPraca}</p></div>` : ""}
+    ${SEMANA.avisoPraca ? `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8"><b>🫙 Faltam potes para esta semana</b><p>${SEMANA.avisoPraca}</p></div>` : ""}
     <p>Cardápio com <b>${nRef()} refeições por dia</b>. Dê uma olhada: se estiver do seu gosto, aprove e siga para a lista de compras.</p>
     ${tabela(null)}
     <p class="muted">A lista de compras é feita a partir deste cardápio. Depois, na aba Cardápio, você vê cada dia completo, com as bebidas.</p>

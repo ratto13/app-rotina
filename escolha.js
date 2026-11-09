@@ -3,7 +3,9 @@
 // 1) quem come em casa, 2) quantos potes tem, 3) quantas refeições por dia
 // e 4) o que quer comer (a tela que substitui o "Do que você não gosta?").
 // Ele usa os dados do banco.js (BANCO e BANCO_ID) e segue o padrão do banco
-// de dados (versão 1.5, seção 7).
+// de dados (versão 1.8, seção 7).
+// Desde o padrão 1.7, o que era regra virou sugestão: a página só trava quando
+// falta o básico (o piso) e, nos outros casos, monta a semana e avisa a pessoa.
 // As respostas ficam guardadas em G, a "gaveta" de gostos criada no script.js,
 // que vale para todas as semanas.
 
@@ -30,17 +32,13 @@ function tamanhoPote(){
 const potes = ml => (G.potes && G.potes[ml]) || 0;
 // FAIXAS: a tabela do plano de potes do manual (seção 0.6), contada em potes de porção da casa.
 const FAIXAS = [
-  {ate: 10, nome: "Até 10 potes", texto: "Semana pequena: almoço pronto, e o resto feito na hora (tapioca, cuscuz, lanches e ovos). Sem torta."},
+  {ate: 10, nome: "Até 10 potes", texto: "Semana pequena: almoço pronto, e o resto feito na hora (tapioca, cuscuz, lanches e ovos). De preferência sem torta: se você marcar, ela entra e usa mais potes."},
   {ate: 25, nome: "De 11 a 25 potes", texto: "Almoço e parte das jantas prontos, com 1 legume. A torta entra em meia receita, se sobrarem 4 potes."},
   {ate: 40, nome: "De 26 a 40 potes", texto: "Quase a lista completa: 2 proteínas, 1 legume e a torta inteira."},
   {ate: Infinity, nome: "Mais de 40 potes", texto: "A lista completa do nível 1."}
 ];
 // faixa(): em qual linha da tabela a casa está, pelos potes de porção do tamanho certo.
 const faixa = () => FAIXAS.find(f => potes(tamanhoPote()) <= f.ate);
-// semAssado(): com até 10 potes de porção, a semana não leva assado de forma (torta),
-// como manda a tabela do plano de potes (manual, seção 0.6). A página avisa a pessoa.
-const semAssado = () => potes(tamanhoPote()) <= 10;
-const ehAssado = item => item.modulo === "assado de forma";
 // A semana completa do nível 1 usa cerca de 37 potes de porção e 9 potes da praça (Anexo A, seção A.6.1).
 const POTES_SEMANA_COMPLETA = {porcao: 37, praca: 9};
 // SUGESTAO_INICIO: quantos potes sugerir para começar (manual, seção 0.6):
@@ -114,9 +112,8 @@ const USADOS = new Set(BANCO.pratos.flatMap(p => p.componentes.map(c => c.id)));
 // Entram os pratos na hora e os preparos que vão direto para o prato, como a torta.
 function candidatos(ref){
   const pratos = BANCO.pratos.filter(p => p.nivel <= NIVEL && p.refeicoes.includes(ref) && disponivel(p.id));
-  // Com até 10 potes, o assado de forma (torta) não entra (semAssado).
-  const preparos = BANCO.preparos.filter(p => p.nivel <= NIVEL && p.refeicoes.includes(ref) && !USADOS.has(p.id) && disponivel(p.id)
-    && !(semAssado() && ehAssado(p)));
+  // Desde o manual 3.19, a torta entra mesmo com poucos potes, se a pessoa marcar (é só sugestão).
+  const preparos = BANCO.preparos.filter(p => p.nivel <= NIVEL && p.refeicoes.includes(ref) && !USADOS.has(p.id) && disponivel(p.id));
   return [...pratos, ...preparos];
 }
 // tipoPrato(): separa o que é bebida, o que é acompanhamento de vegetal e o que é o prato principal.
@@ -134,16 +131,17 @@ function familia(p){
   if (["mingau", "prato de ovos", "vitamina", "suco"].includes(p.modulo)) return "modulo:" + p.modulo;
   return p.id;
 }
-// REFS: as 6 refeições, com o nome usado nas fichas e o mínimo de cada uma (padrão, seção 7.4).
+// REFS: as 6 refeições, com o nome usado nas fichas e a variedade sugerida de cada uma (padrão, seção 7.4).
+// Abaixo do sugerido, a página monta mesmo assim e avisa que vai ter comida repetida.
 // pratos = quantos pratos diferentes; acomp = acompanhamentos de vegetal; soBase = só conta o que tem carboidrato;
 // comProteina = no almoço e na janta, só conta como prato o que tem proteína (polenta sozinha é acompanhamento).
 const REFS = [
   {i: 0, nome: "café", tela: "café da manhã", pratos: 2, soBase: true, dica: "Bases do café e dos lanches"},
   {i: 1, nome: "lanche da manhã", tela: "lanche da manhã", pratos: 2, soBase: true, vitamina: true, dica: "Bases do café e dos lanches"},
   {i: 2, nome: "almoço", tela: "almoço", pratos: 3, acomp: 3, comProteina: true, dica: "Proteínas ou Bases do almoço e da janta"},
-  {i: 3, nome: "lanche da tarde", tela: "lanche da tarde", pratos: 3, dica: "Bases do café e dos lanches, Recheios ou Pratos prontos do freezer"},
-  {i: 4, nome: "janta", tela: "janta", pratos: 3, acomp: 3, comProteina: true, dica: "Proteínas, Recheios ou Bases do almoço e da janta"},
-  {i: 5, nome: "ceia", tela: "ceia", pratos: 3, dica: "Bases do café e dos lanches ou Recheios"}
+  {i: 3, nome: "lanche da tarde", tela: "lanche da tarde", pratos: 3, dica: "Bases do café e dos lanches, Alimentos versáteis ou Pratos prontos do freezer"},
+  {i: 4, nome: "janta", tela: "janta", pratos: 3, acomp: 3, comProteina: true, dica: "Proteínas, Alimentos versáteis ou Bases do almoço e da janta"},
+  {i: 5, nome: "ceia", tela: "ceia", pratos: 3, dica: "Bases do café e dos lanches ou Alimentos versáteis"}
 ];
 // contaRef(): conta, numa refeição, quantos pratos diferentes e quantos acompanhamentos dá para montar.
 function contaRef(r){
@@ -172,19 +170,21 @@ function folga(r, so){
 function refsAtivas(){
   return REFS.filter(r => ativas().includes(r.i));
 }
-// faltas(): as refeições que ainda não chegaram ao mínimo, com a dica do que marcar.
+// faltas(): as refeições que ainda não têm o PISO (padrão 1.8, seção 7.4):
+// pelo menos 1 prato possível (no café e no lanche da manhã, 1 base) e, no almoço e na janta,
+// também 1 legume ou salada. Sem o piso, não há o que pôr na refeição, e o botão não funciona.
+// (A variedade sugerida, de 2 ou 3 pratos, não trava mais: ela só aparece no medidor e nos avisos.)
 function faltas(){
-  // Cada falta já diz em qual grupo marcar.
-  return refsAtivas().filter(r => folga(r) < 0).map(r => {
+  return refsAtivas().map(r => {
     const n = contaRef(r), msg = [];
-    if (n.pratos < r.pratos) msg.push(`faltam ${r.pratos - n.pratos} ${r.soBase ? "base(s)" : "prato(s)"} diferente(s); marque em ${r.dica}`);
-    if (r.acomp && n.acomp < r.acomp) msg.push(`faltam ${r.acomp - n.acomp} legume(s) ou salada(s); marque em Legumes e folhas`);
-    if (r.vitamina && !n.vitamina) msg.push("falta a vitamina; marque banana em Frutas e leite em Bebidas");
+    if (n.pratos < 1) msg.push(`marque pelo menos ${r.soBase ? "uma base" : "um prato"}; procure em ${r.dica}`);
+    if (r.acomp && n.acomp < 1) msg.push("marque pelo menos um legume ou folha, em Legumes e folhas");
     return {r, msg};
-  });
+  }).filter(x => x.msg.length);
 }
 // medidor(): o aviso de variedade de cada grupo, pelas refeições que os itens do grupo atendem.
-// Falta pouco (abaixo do mínimo), Mínimo, Boa variedade (1 ou 2 a mais) e Ótima variedade (3 ou mais).
+// Falta pouco (abaixo do sugerido: vai ter comida repetida), Mínimo (igual ao sugerido),
+// Boa variedade (1 ou 2 a mais) e Ótima variedade (3 ou mais).
 function medidor(grupo){
   const refsGrupo = new Set(itensGrupo(grupo).filter(i => i.nivel === 1).flatMap(i => i.refeicoes));
   const lista = refsAtivas().filter(r => refsGrupo.has(r.nome));
@@ -199,14 +199,38 @@ function medidor(grupo){
   return {cls: "otima", txt: "Ótima variedade"};
 }
 // GRUPOS: a ordem dos grupos na tela (padrão, lista 5.8).
-const GRUPOS = ["Proteínas", "Bases do almoço e da janta", "Bases do café e dos lanches", "Pratos prontos do freezer", "Recheios", "Frutas", "Legumes e folhas", "Bebidas"];
-const itensGrupo = g => [...BANCO.ingredientes, ...BANCO.preparos].filter(i => i.escolha === g);
+// "Alimentos versáteis" é o antigo "Recheios" (o nome mudou no padrão 1.7).
+const GRUPOS = ["Proteínas", "Bases do almoço e da janta", "Bases do café e dos lanches", "Pratos prontos do freezer", "Alimentos versáteis", "Frutas", "Legumes e folhas", "Bebidas"];
+// FRASE_GRUPO: a frase que aparece embaixo do nome do grupo (padrão, lista 5.8).
+const FRASE_GRUPO = {
+  "Alimentos versáteis": "Entram em vários pratos: no recheio da tapioca, do cuscuz e do pão, no omelete e no lanche."
+};
+// grupoDe(): o grupo do item na tela. Se um banco.js antigo ainda disser "Recheios",
+// o item vai para "Alimentos versáteis" do mesmo jeito (assim nada some da tela).
+const grupoDe = i => i.escolha === "Recheios" ? "Alimentos versáteis" : i.escolha;
+const itensGrupo = g => [...BANCO.ingredientes, ...BANCO.preparos].filter(i => grupoDe(i) === g);
 
 /* ============ TELA 1: QUEM COME EM CASA ============ */
 // gostos(): a explicação de como o cardápio é montado e a primeira pergunta.
 // O nome "gostos" continua o mesmo para os links antigos (#gostos) seguirem funcionando.
 function gostos(){
-  $app.innerHTML = `<h1>Como o seu cardápio é montado</h1>
+  // No topo: o que o método é ("Não é dieta") e o caminho da semana em 6 passos (padrão 1.8, seção 7.1.3).
+  $app.innerHTML = `<div class="card" style="background:var(--green-l);border-color:#BFD9C7">
+      <b>🥦 Não é dieta.</b>
+      <p>É um jeito de organizar a comida da semana: você compra, cozinha e congela de uma vez, e no dia a dia é só esquentar.</p>
+    </div>
+
+    <h1>Como funciona a sua semana</h1>
+    <ol class="lista">
+      <li>Responda 4 perguntas e escolha o que quer comer.</li>
+      <li>Aprove o cardápio.</li>
+      <li>Faça as compras com a lista.</li>
+      <li>Guarde e cozinhe seguindo o passo a passo.</li>
+      <li>Coma durante a semana.</li>
+      <li>No fim, envie o relatório.</li>
+    </ol>
+
+    <h1>Como o seu cardápio é montado</h1>
 
     <div class="card" style="background:var(--tomato-l);border-color:#F2CDB9">
       <b>⚠️ Método em teste</b>
@@ -291,6 +315,13 @@ function potesTela(){
   $app.innerHTML = `<span class="pill s">Pergunta 2 de 4</span>
     <h1 style="margin-top:8px">🫙 Quantos potes você tem?</h1>
     <p class="muted">O método foi pensado em potes com tampa de <b>370 ml</b>, os mais comuns no mercado. Conte os que você já tem.</p>
+    <!-- Explicação dos potes (padrão 1.8, seção 7.1.3): vem antes dos números, e a sugestão logo abaixo. -->
+    <div class="card">
+      <b>🧊 Para que servem os potes?</b>
+      <p>Uma vez por semana, você cozinha e guarda a comida em potes no freezer. No dia a dia, é só esquentar. Quanto mais potes, mais refeições ficam prontas. Com poucos, o resto é feito na hora (tapioca, cuscuz, ovos).</p>
+      <b>🍱 Não é marmita.</b>
+      <p>Cada pote guarda uma parte da refeição (o arroz, o feijão, a carne). Na hora de comer, você junta o que o cardápio do dia pede e completa com a salada ou o que é feito na hora.</p>
+    </div>
     <div class="card" style="background:var(--green-l);border-color:#BFD9C7">
       <b>💡 Não sabe quantos precisa? Use a sugestão para começar</b>
       <p>Para a sua casa (${fmtPorcao(porcoesCasa())}): ${sugTexto}.</p>
@@ -308,8 +339,8 @@ function potesTela(){
     </div>
     <div class="card" style="background:var(--blue-l);border-color:#C8DBE8">
       <b>Na sua casa (${fmtPorcao(porcoesCasa())}), cada refeição vai num pote de ${ml} ml.</b>
-      <p><b>Tamanho da sua semana:</b> ${f.nome}. ${f.texto}</p>
-      ${semAssado() ? `<p><b>A torta fica para depois:</b> ela vem recomendada, mas só entra no cardápio quando você tiver mais de 10 potes de porção.</p>` : ""}
+      <p><b>Tamanho sugerido para a sua semana:</b> ${f.nome}. ${f.texto}</p>
+      <p class="muted" style="font-size:.88rem">É só uma sugestão: a página monta a semana com o que você escolher e avisa se faltarem potes.</p>
     </div>
     <div class="card">
       <b>Para a semana completa do nível 1</b>
@@ -369,10 +400,10 @@ function escolha(){
     const depois = itens.filter(i => i.nivel > 1);
     const med = medidor(g);
     html += `<div class="grp"><div class="sec-t">${g}</div>${med ? `<span class="med ${med.cls}">${med.txt}</span>` : ""}</div>
+      ${FRASE_GRUPO[g] ? `<p class="muted" style="font-size:.88rem;margin:0 0 6px">${FRASE_GRUPO[g]}</p>` : ""}
       <div class="card" style="padding:4px 12px">
       ${n1.map(i => `<div class="chk ${escolheu(i.id) ? "on esc" : ""}" data-esc="${i.id}"><div class="box">${escolheu(i.id) ? "✓" : ""}</div>
-        <div class="lbl" style="text-decoration:none">${esc(nomeTela(i))}${i.recomendado ? ` <span class="selo">⭐ recomendado</span>` : ""}
-          ${semAssado() && ehAssado(i) ? `<div class="muted" style="font-size:.8rem">Não entra nesta semana: precisa de mais de 10 potes de porção.</div>` : ""}</div></div>`).join("")}
+        <div class="lbl" style="text-decoration:none">${esc(nomeTela(i))}${i.recomendado ? ` <span class="selo">⭐ recomendado</span>` : ""}</div></div>`).join("")}
       </div>`;
     // Níveis 2 a 4: fechados, só para ver, separados por nível.
     if (depois.length){
@@ -382,24 +413,36 @@ function escolha(){
         <p class="muted" style="font-size:.85rem">Libera quando você avançar de nível.</p></details>`;
     }
   });
-  // Aviso da torta: marcada, mas fora da semana por causa do número de potes.
-  const assadosMarcados = [...BANCO.preparos].filter(i => ehAssado(i) && escolheu(i.id));
-  if (semAssado() && assadosMarcados.length){
-    html += `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8"><b>🫙 ${assadosMarcados.map(nomeTela).join(", ")}: fica para depois.</b>
-      <p>Com até 10 potes de porção, a semana não leva torta. Ela entra quando você tiver mais potes. <a href="#potes">Mudar os potes</a></p></div>`;
+  // Teste da montagem (monta.js, testaSemana): diz se a semana fecha e quais avisos mostrar.
+  // erro = não deu para montar (raro: só quando falta o básico); repete = refeições com comida repetida;
+  // potes = texto do aviso de potes (ou vazio). Os avisos NÃO travam o botão (padrão 1.8, seção 7.8).
+  const teste = !fal.length && typeof testaSemana === "function" ? testaSemana() : null;
+  const erro = teste && teste.erro;
+  const repete = teste && !erro ? teste.repete : [];
+  const avisoPotes = teste && !erro ? teste.potes : "";
+  const temAviso = repete.length || avisoPotes;
+  if (erro){
+    // Não dá para montar: falta o básico em alguma refeição.
+    html += `<div class="card" style="background:var(--tomato-l);border-color:#F2CDB9"><b>Ainda não dá para montar a semana.</b>
+      <p>${erro} Marque mais alguns alimentos.</p></div>`;
+  } else if (fal.length){
+    // Falta o piso: a refeição não tem nada para entrar.
+    html += `<div class="card" style="background:var(--tomato-l);border-color:#F2CDB9"><b>Falta marcar o básico para montar a semana:</b>
+      <ul class="lista">${fal.map(x => `<li><b>${cap1(x.r.tela)}:</b> ${x.msg.join(". ")}.</li>`).join("")}</ul></div>`;
+  } else if (temAviso){
+    // Dá para montar, mas com avisos: comida repetida e/ou potes faltando.
+    html += `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8">
+      ${repete.length ? `<b>⚠️ Seu cardápio vai ter comida repetida</b>
+        <ul class="lista">${repete.map(x => `<li><b>${cap1(x.tela)}:</b> ${x.msg}</li>`).join("")}</ul>
+        <p>Para variar mais, marque mais alimentos. Se preferir assim, pode montar.</p>` : ""}
+      ${avisoPotes ? `<b>🫙 Faltam potes para esta semana</b><p>${avisoPotes} <a href="#potes">Mudar os potes</a></p>` : ""}
+    </div>`;
+  } else {
+    html += `<div class="card" style="background:var(--green-l);border-color:#BFD9C7"><b>✓ Já dá para montar a sua semana.</b> Se quiser mais variedade, marque mais alimentos.</div>`;
   }
-  // Mesmo com o mínimo, a semana pode não fechar (exemplo: poucos potes e poucos pratos feitos na hora).
-  // Na Semana 1, a página testa a montagem antes de liberar o botão (testaSemana, no monta.js).
-  const naoFecha = !fal.length && typeof testaSemana === "function" ? testaSemana() : null;
-  // Aviso do que falta para o mínimo, ou a confirmação de que já dá para montar.
-  html += naoFecha
-    ? `<div class="card" style="background:var(--tomato-l);border-color:#F2CDB9"><b>Falta pouco para a semana fechar.</b>
-        <p>${naoFecha} Com estes alimentos e os potes que você tem, a semana repetiria pratos demais. Marque mais alguns alimentos ou <a href="#potes">aumente os potes</a>.</p></div>`
-    : fal.length
-    ? `<div class="card" style="background:var(--tomato-l);border-color:#F2CDB9"><b>Ainda falta pouco para montar a semana sem repetir demais:</b>
-        <ul class="lista">${fal.map(x => `<li><b>${cap1(x.r.tela)}:</b> ${x.msg.join(". ")}.</li>`).join("")}</ul></div>`
-    : `<div class="card" style="background:var(--green-l);border-color:#BFD9C7"><b>✓ Já dá para montar a sua semana.</b> Se quiser mais variedade, marque mais alimentos.</div>`;
-  html += `<button class="btn" id="pronto" style="width:100%;margin-top:8px" ${fal.length || naoFecha ? "disabled" : ""}>Montar meu cardápio ›</button>
+  // Com aviso, o botão principal vira "Montar mesmo assim", e aparece o "Voltar e marcar mais".
+  html += `<button class="btn" id="pronto" style="width:100%;margin-top:8px" ${fal.length || erro ? "disabled" : ""}>${temAviso ? "Montar mesmo assim ›" : "Montar meu cardápio ›"}</button>
+    ${temAviso ? `<button class="btn ghost" id="maisAlimentos" style="width:100%;margin-top:10px">Voltar e marcar mais</button>` : ""}
     <button class="btn ghost" id="volta" style="width:100%;margin-top:10px">‹ Voltar</button>`;
   $app.innerHTML = html;
   // Marcar ou desmarcar um alimento: salva e redesenha, para o medidor se atualizar.
@@ -408,7 +451,10 @@ function escolha(){
     saveGostos(); const y = window.scrollY; escolha(); window.scrollTo(0,y);
   });
   // Montar: marca as perguntas como respondidas e abre o cardápio para aprovar.
-  document.getElementById("pronto").onclick = () => { if (faltas().length || naoFecha) return; G._visto = true; saveGostos(); S.tab = "aprovar"; go(); window.scrollTo(0,0); };
+  document.getElementById("pronto").onclick = () => { if (faltas().length || erro) return; G._visto = true; saveGostos(); S.tab = "aprovar"; go(); window.scrollTo(0,0); };
+  // "Voltar e marcar mais": sobe para o começo da lista de alimentos.
+  const mais = document.getElementById("maisAlimentos");
+  if (mais) mais.onclick = () => window.scrollTo(0,0);
   document.getElementById("volta").onclick = () => { S.tab = "refeicoes"; go(); window.scrollTo(0,0); };
 }
 // cap1(): primeira letra maiúscula (ex.: "almoço" vira "Almoço").

@@ -1,8 +1,8 @@
 // =====================================================================
 // banco.js · Banco de dados do Método Modular
 // ---------------------------------------------------------------------
-// O que é: todas as fichas do arquivo "D - fichas-banco-de-dados" (versão 1.3),
-// no formato do padrão do banco de dados (versão 1.5, seção 10).
+// O que é: todas as fichas do arquivo "D - fichas-banco-de-dados" (versão 1.4),
+// no formato do padrão do banco de dados (versão 1.8, seção 10).
 // Para que serve: a página lê este arquivo para montar a tela de escolha,
 // o cardápio, a compra, o guardar e a cozinha, sem IA.
 // Importante: este arquivo é gerado a partir das fichas. Para mudar um
@@ -1368,7 +1368,7 @@ const BANCO = {
         "feijao-tropeiro",
         "pastel-forno"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "mucarela",
@@ -1805,7 +1805,7 @@ const BANCO = {
         "caldo-verde",
         "sopa-lentilha-calabresa"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "presunto"
@@ -1857,7 +1857,7 @@ const BANCO = {
         "arroz-de-forno",
         "baiao-de-dois"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "queijo-prato",
@@ -1904,7 +1904,7 @@ const BANCO = {
         "cuscuz-ovo-mucarela",
         "omelete-mucarela"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "mucarela",
@@ -1950,7 +1950,7 @@ const BANCO = {
         "lanche-natural-presunto",
         "lanche-natural-repolho-maca"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "peito-de-peru",
@@ -1995,7 +1995,7 @@ const BANCO = {
         "lanche-natural-presunto",
         "lanche-natural-repolho-maca"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "presunto",
@@ -2315,7 +2315,7 @@ const BANCO = {
       "entra_em": [
         "pate-ricota"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "queijo-minas-frescal",
@@ -3799,7 +3799,7 @@ const BANCO = {
         "wrap",
         "tapioca"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "atum",
@@ -4783,7 +4783,7 @@ const BANCO = {
         "tapioca",
         "torrada"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "pasta-frango",
@@ -4842,7 +4842,7 @@ const BANCO = {
         "tapioca",
         "torrada"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "pate-atum",
@@ -4908,7 +4908,7 @@ const BANCO = {
         "tapioca",
         "torrada"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "pate-ricota",
@@ -4972,7 +4972,7 @@ const BANCO = {
         "tapioca",
         "torrada"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "pate-ovo",
@@ -5036,7 +5036,7 @@ const BANCO = {
       "entra_em": [
         "wrap"
       ],
-      "escolha": "Recheios",
+      "escolha": "Alimentos versáteis",
       "recomendado": false,
       "substitutos": [
         "pasta-frango",

@@ -1,7 +1,9 @@
 /* ============ MONTAGEM AUTOMÁTICA DA SEMANA ============ */
 // Este arquivo monta a semana sozinho, a partir das respostas da pessoa:
 // o cardápio, a lista de compras, o guardar, a cozinha e a conferência.
-// Ele segue as regras de montagem do padrão do banco de dados (versão 1.6, seção 7).
+// Ele segue as regras de montagem do padrão do banco de dados (versão 1.8, seção 7).
+// Desde o padrão 1.7, as regras de repetição e o limite de potes são SUGESTÃO:
+// a página tenta seguir; quando não dá, monta assim mesmo e avisa a pessoa.
 // Não usa IA: as mesmas respostas sempre dão a mesma semana.
 //
 // Como funciona, em 5 passos:
@@ -166,9 +168,9 @@ const recomendadoEm = item => item.recomendado || (item.tipo === "prato" && part
 const ORDEM_BANCO = {};
 [...BANCO.ingredientes, ...BANCO.preparos, ...BANCO.pratos].forEach((it, i) => ORDEM_BANCO[it.id] = i);
 
-/* ============ LIMITE DE POTES ============ */
-// orcamentoPotes(): quantos potes de porção a semana pode usar (manual, seção 0.6: a cozinha
-// nunca produz mais porções do que os potes disponíveis).
+/* ============ POTES DA PESSOA ============ */
+// orcamentoPotes(): quantos potes de porção a pessoa tem. Desde o manual 3.19, isso NÃO limita
+// a semana: só decide se sobra pote para guardar receitas inteiras (seção 2) e se aparece o aviso de potes.
 // Quando o pote de porção da casa é o de 640 ml, ele divide espaço com o pote da praça:
 // a página separa 4 potes para a praça (a quantidade sugerida) e usa o resto como pote de porção.
 function orcamentoPotes(){
@@ -196,8 +198,8 @@ function principais(r){
     && (!r.comProteina || temProteina(p))
     && (r.nome !== "ceia" || podeNaCeia(p)));
 }
-// reservas(): pratos feitos na hora para completar o almoço e a janta quando os potes acabam
-// (manual, seção 0.6: "completar os outros dias com recheado e prato de ovos").
+// reservas(): pratos feitos na hora (recheado, salada com proteína, prato de ovos) que também
+// podem entrar no almoço e na janta, para dar mais variedade (manual, seção 0.6).
 function reservas(r){
   if (!r.comProteina) return [];
   return BANCO.pratos.filter(p => p.nivel <= NIVEL && ["recheado", "prato de ovos", "salada"].includes(p.modulo)
@@ -225,7 +227,10 @@ function frutas(){
 // 1) no máximo 3 vezes na semana naquela refeição (menos no café e no lanche da manhã);
 // 2) não repetir o do dia anterior naquela refeição;
 // 3) não repetir no mesmo dia um prato de outra refeição;
-// 4) validade curta; 5) a ceia (já filtrada em principais); e o limite de potes.
+// 4) validade curta; 5) a ceia (já filtrada em principais).
+// As regras 1, 2 e 3 são PREFERÊNCIA: com opc.relax = true, elas são ignoradas
+// (é o que a página usa quando a pessoa marcou poucos alimentos). As regras 4 e 5 valem sempre.
+// Os potes não entram mais aqui: a semana não é limitada pelos potes (manual 3.19, seção 0.6).
 // Desempate: o menos usado, o de validade mais curta, o recomendado e a ordem do banco.
 function opcoesOk(lista, dia, ri, ctx, opc){
   opc = opc || {};
@@ -233,11 +238,10 @@ function opcoesOk(lista, dia, ri, ctx, opc){
   const naRef = ctx.contaRef[ri] || (ctx.contaRef[ri] = {});
   const ontem = dia > 0 ? (ctx.ontem[ri] && ctx.ontem[ri][opc.slot || "p"]) : null;
   const ok = lista.filter(p => {
-    if (opc.max3 && (naRef[fam(p)] || 0) >= 3) return false;
-    if (opc.semSeguido !== false && ontem && fam(BANCO_ID[ontem] || {id: ontem}) === fam(p)) return false;
-    if ((ctx.hoje[p.id] || 0) > 0 && p.tipo !== "ingrediente" && tipoPrato(p) !== "bebida") return false;
-    if (dia > diaLimite(p)) return false;
-    if (potesNovos(p, ctx.usados) > ctx.orc - ctx.gastos) return false;
+    if (!opc.relax && opc.max3 && (naRef[fam(p)] || 0) >= 3) return false;                              // regra 1
+    if (!opc.relax && opc.semSeguido !== false && ontem && fam(BANCO_ID[ontem] || {id: ontem}) === fam(p)) return false;  // regra 2
+    if (!opc.relax && (ctx.hoje[p.id] || 0) > 0 && p.tipo !== "ingrediente" && tipoPrato(p) !== "bebida") return false;  // regra 3
+    if (dia > diaLimite(p)) return false;                                                                 // regra 4 (sempre)
     return true;
   });
   return ok.sort((a, b) =>
@@ -281,7 +285,8 @@ function montaCardapio(){
 }
 // montaNaOrdem(): monta as refeições na ordem pedida.
 function montaNaOrdem(ordemRefs){
-  const ctx = {contaRef: {}, semana: {}, usados: {}, gastos: 0, orc: orcamentoPotes(), ontem: {}};
+  // orc: Infinity = sem limite de potes na montagem (o aviso de potes é feito depois, em avisoDePotes).
+  const ctx = {contaRef: {}, semana: {}, usados: {}, gastos: 0, orc: Infinity, ontem: {}};
   const dias = Array.from({length: 7}, () => Array.from({length: 6}, () => null));
   let erro = null;
   // Com até 4 refeições, o lanche da manhã sai, mas a vitamina vai para o café (script.js, ATIVAS).
@@ -335,12 +340,15 @@ function montaNaOrdem(ordemRefs){
       ctx.hoje = hojePorDia[d];
       ctx.ontem = {[r.i]: d > 0 ? ontemPorRef[r.i] : null};
       // As opções, na ordem: na ceia, primeiro as que têm carboidrato (manual, seção 5.1);
-      // depois os pratos da refeição; no almoço e na janta, por último os pratos feitos na hora
-      // (reservas), para quando os potes acabam.
+      // depois os pratos da refeição; no almoço e na janta, depois os pratos feitos na hora (reservas).
+      // Primeiro vêm as opções que seguem as regras 1 a 3; no fim da lista, as mesmas opções
+      // "soltas" (relax), que só entram quando nenhuma outra serve (manual 3.19, seção 0.12).
       const lista = [];
-      if (r.nome === "ceia") lista.push(...opcoesOk(principais(r).filter(x => temPapel(x, "carboidrato")), d, r.i, ctx, {max3}));
-      lista.push(...opcoesOk(principais(r), d, r.i, ctx, {max3}));
-      if (r.comProteina) lista.push(...opcoesOk(reservas(r), d, r.i, ctx, {max3}));
+      [{max3}, {max3, relax: true}].forEach(opc => {
+        if (r.nome === "ceia") lista.push(...opcoesOk(principais(r).filter(x => temPapel(x, "carboidrato")), d, r.i, ctx, opc));
+        lista.push(...opcoesOk(principais(r), d, r.i, ctx, opc));
+        if (r.comProteina) lista.push(...opcoesOk(reservas(r), d, r.i, ctx, opc));
+      });
       const vistos = new Set();
       for (const p of lista){
         if (vistos.has(p.id)) continue;
@@ -357,7 +365,7 @@ function montaNaOrdem(ordemRefs){
   });
   // Escreve os textos de cada refeição.
   dias.forEach(dia => dia.forEach(m => { if (m) Object.assign(m, textos(m)); }));
-  return {dias, erro, falhou, potesUsados: ctx.gastos, orc: ctx.orc};
+  return {dias, erro, falhou, potesUsados: ctx.gastos, orc: orcamentoPotes()};
 }
 // completa(): o que falta no molde, além do prato principal.
 // Café: bebida, proteína leve (ovos) e fruta. Almoço: suco e acompanhamento de vegetal.
@@ -365,19 +373,21 @@ function montaNaOrdem(ordemRefs){
 function completa(r, p, d, ctx){
   const ex = [];
   const add = (lista, slot, opc) => { const x = escolhe(lista, d, r.i, ctx, Object.assign({porId: true, slot}, opc)); if (x) { marca(x, r.i, ctx, slot, true); ex.push(x); } return x; };
-  // "suave": se nada respeitar a regra do dia anterior, aceita repetir (bebidas e frutas alternam quando dá).
-  const addSuave = (lista, slot) => add(lista, slot) || add(lista, slot, {semSeguido: false});
+  // "suave": se nada respeitar as regras, aceita repetir (bebidas e frutas alternam quando dá).
+  const addSuave = (lista, slot) => add(lista, slot) || add(lista, slot, {relax: true});
+  // addAcomp(): legume ou salada, no máximo 3 vezes na semana; com poucos escolhidos, repete (relax).
+  const addAcomp = ref => add(acomps(ref), "acomp", {max3: true}) || add(acomps(ref), "acomp", {relax: true});
   if (r.nome === "café"){
     addSuave(bebidas("café"), "beb");
     if (!temProteina(p)) addSuave(pratosOvos("café"), "ovo");
     if (!temPapel(p, "fruta")) addSuave(frutas(), "fruta");
   } else if (r.nome === "almoço"){
     addSuave(bebidas("almoço"), "beb");
-    if (!temPapel(p, "vegetal")) add(acomps("almoço"), "acomp", {max3: true});
+    if (!temPapel(p, "vegetal")) addAcomp("almoço");
   } else if (r.nome === "lanche da tarde"){
     if (!temPapel(p, "bebida")) addSuave(bebidas("lanche da tarde").filter(b => b.modulo !== "vitamina"), "beb");
   } else if (r.nome === "janta"){
-    if (!temPapel(p, "vegetal")) add(acomps("janta"), "acomp", {max3: true});
+    if (!temPapel(p, "vegetal")) addAcomp("janta");
   } else if (r.nome === "ceia"){
     // O mingau vai sempre com uma proteína leve (manual, seção 5.3).
     if (p.modulo === "mingau" && !temProteina(p)) addSuave(pratosOvos("ceia"), "ovo");
@@ -454,7 +464,8 @@ function producao(g, potesUsados, orc){
   while (mudou){ mudou = false; [...todos].forEach(id => partes(BANCO_ID[id]).forEach(x => { if (BANCO_ID[x.id] && BANCO_ID[x.id].tipo === "preparo" && !todos.has(x.id)) { todos.add(x.id); mudou = true; } })); }
   const vis = {}; [...todos].forEach(id => visita(id, vis));
   const res = {};
-  let sobraPotes = orc - potesUsados;
+  // Receitas inteiras só quando a sobra cabe nos potes que a pessoa tem (com potes faltando, nada sobra).
+  let sobraPotes = Math.max(0, orc - potesUsados);
   ordem.forEach(id => {
     const p = BANCO_ID[id];
     const T = precisa[id] || 0;
@@ -824,7 +835,7 @@ function esperadoDaSemana(prod, arm){
     tot.praca ? `${tot.praca} ${plural(tot.praca, "pote")} da praça` : "",
     tot.saq ? `${tot.saq} ${plural(tot.saq, "saquinho")}` : "",
     tot.cubos ? `${tot.cubos} ${plural(tot.cubos, "forminha")} de gelo` : ""].filter(Boolean);
-  return {esp, total: frase(partesTot) + ".", praca: tot.praca};
+  return {esp, total: frase(partesTot) + ".", praca: tot.praca, potes: tot.potes};
 }
 
 // assinatura(): um resumo das respostas. Se ele mudar, a semana é montada de novo.
@@ -872,13 +883,9 @@ function montaSemana(){
   SEMANA.esperadoTotal = e.total;
   SEMANA.tempoCozinha = cz.total;
   SEMANA.potesGuardar = e.total;
-  // Potes da praça: a página não limita a semana, só avisa quando faltam (padrão, seção 7.1.2).
-  // Com o pote de 640 ml, o pote de porção e o da praça são do mesmo tamanho:
-  // os que sobram depois das porções ficam para a praça.
-  const pracaTem = tamanhoPote() === 640 ? Math.max(0, potes(640) - MONTADA.potes) : potes(640);
-  SEMANA.avisoPraca = e.praca > pracaTem
-    ? `Esta semana usa ${e.praca} potes da praça, e você tem ${pracaTem}. Para os que faltam, use outros potes com tampa que tiver em casa, como pote de sorvete, de margarina ou vidro.`
-    : "";
+  // Potes (de porção e da praça): a página não limita a semana, só avisa quando faltam
+  // (padrão 1.8, seções 7.1.2 e 7.8). O script.js mostra este aviso na tela de aprovar e no guardar.
+  SEMANA.avisoPraca = avisoDePotes(e);
   // Itens de validade curta usados nos primeiros dias.
   const curtos = Object.values(prod.prep).filter(x => limiteDia(x.p) < 6).map(x => minus(x.p.nome));
   SEMANA.usePrimeiro = curtos.length ? `${frase(curtos)} ${curtos.length > 1 ? "duram" : "dura"} poucos dias na geladeira. Por isso ${curtos.length > 1 ? "eles aparecem" : "aparece"} nos primeiros dias do cardápio.` : "nada nesta semana estraga rápido.";
@@ -887,14 +894,85 @@ function montaSemana(){
   SEMANA.notaCompra = `Lista calculada para ${fmtPorcao(porcoesCasa())}, só com o que o seu cardápio usa. Os itens de tempero e de base (sal, óleo, farinha...) entram na quantidade de 1 pacote.`;
   return true;
 }
-// testaSemana(): testa se a semana fecha com as respostas de agora, sem trocar nada na página.
-// A tela de escolha usa para só liberar o botão "Montar meu cardápio" quando a semana fecha.
-// Devolve o aviso (texto) ou null. Guarda o resultado para não testar de novo sem mudança.
+/* ============ AVISOS (padrão 1.8, seção 7.8) ============ */
+// avisoDePotes(): o texto do aviso de potes, ou "" quando os potes da pessoa bastam.
+// e = o resultado de esperadoDaSemana(): potes de porção por tamanho (e.potes) e potes da praça (e.praca).
+// O pote da praça é de 640 ml: quando a casa também usa o de 640 ml para as porções,
+// os dois usos dividem os mesmos potes.
+function avisoDePotes(e){
+  const usa = Object.assign({}, e.potes || {});
+  const falta = [];
+  [370, 1040].forEach(ml => {
+    if ((usa[ml] || 0) > potes(ml)) falta.push(`${usa[ml]} potes de ${ml} ml (você tem ${potes(ml)})`);
+  });
+  const usa640 = (usa[640] || 0) + (e.praca || 0);
+  if (usa640 > potes(640)){
+    const deQue = usa[640] ? "de 640 ml, contando os da praça" : "da praça, de 640 ml,";
+    falta.push(`${usa640} potes ${deQue} (você tem ${potes(640)})`);
+  }
+  return falta.length
+    ? `Esta semana usa ${frase(falta)}. Para os que faltam, use outros potes com tampa que tiver em casa, como pote de sorvete, de margarina ou vidro.`
+    : "";
+}
+// avisosRepeticao(): as refeições em que a comida vai repetir mais do que as regras sugerem
+// (mais de 3 vezes na semana, ou no dia seguinte). Devolve uma lista de {tela, msg}.
+function avisosRepeticao(dias){
+  const lista = [];
+  // conta(): quantas vezes cada prato (ou legume) aparece e se repete em dias seguidos.
+  const analisa = (r, pega, max3) => {
+    const vezes = {};
+    let seguido = false, antes = null;
+    for (let d = 0; d < 7; d++){
+      const m = dias[d][r.i];
+      const x = m && !m.so ? pega(m) : null;
+      if (!x) { antes = null; continue; }
+      const f = familia(x);
+      vezes[f] = (vezes[f] || 0) + 1;
+      if (antes === f) seguido = true;
+      antes = f;
+    }
+    const n = Object.keys(vezes).length;
+    const cont = Object.values(vezes);
+    const quebrou = seguido || (max3 && cont.some(v => v > 3));
+    return n && quebrou ? {n, min: Math.min(...cont), max: Math.max(...cont)} : null;
+  };
+  // texto(): "só 2 pratos diferentes. Cada um vai aparecer de 3 a 4 vezes na semana."
+  const texto = (a, pal) => a.n === 1
+    ? `só 1 ${pal}. Vai se repetir todos os dias.`
+    : `só ${a.n} ${pal}s diferentes. Cada um vai aparecer ${a.min === a.max ? a.max : `de ${a.min} a ${a.max}`} vezes na semana.`;
+  refsAtivas().forEach(r => {
+    const a = analisa(r, m => m.principal, r.i >= 2);
+    if (a) lista.push({tela: r.tela, msg: texto(a, r.soBase ? "base" : "prato")});
+    if (r.acomp){
+      const b = analisa(r, m => (m.extras || []).find(x => tipoPrato(x) === "acomp"), true);
+      if (b) lista.push({tela: r.tela + " (legumes e saladas)", msg: texto(b, "opção").replace("opçãos", "opções")});
+    }
+  });
+  return lista;
+}
+// testaSemana(): testa a semana com as respostas de agora, sem trocar nada na página.
+// A tela de escolha (escolha.js) usa para mostrar os avisos antes de montar.
+// Devolve {erro, repete, potes}: erro só quando não deu para montar; repete = lista de avisos
+// de comida repetida; potes = texto do aviso de potes. Guarda o resultado para não testar de novo sem mudança.
 let TESTE = null;
 function testaSemana(){
   const a = assinatura();
-  if (!TESTE || TESTE.a !== a) TESTE = {a, erro: montaCardapio().erro};
-  return TESTE.erro;
+  if (!TESTE || TESTE.a !== a){
+    const c = montaCardapio();
+    TESTE = {a, erro: c.erro, repete: [], potes: ""};
+    if (!c.erro){
+      TESTE.repete = avisosRepeticao(c.dias);
+      // Para saber os potes, a página calcula a produção (sem mexer na semana que está na tela).
+      const g = gastos(c.dias);
+      const prod = producao(g, c.potesUsados, c.orc);
+      prod.direto = Object.keys(g.ing);
+      const antes = PROD_ATUAL;
+      PROD_ATUAL = prod;
+      TESTE.potes = avisoDePotes(esperadoDaSemana(prod));
+      PROD_ATUAL = antes;
+    }
+  }
+  return TESTE;
 }
 // usoRefeicao(): o que a refeição tira do freezer (para o estoque se atualizar quando a pessoa marca "Comi").
 function usoRefeicao(m){
