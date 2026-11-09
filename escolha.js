@@ -3,7 +3,7 @@
 // 1) quem come em casa, 2) quantos potes tem, 3) quantas refeições por dia
 // e 4) o que quer comer (a tela que substitui o "Do que você não gosta?").
 // Ele usa os dados do banco.js (BANCO e BANCO_ID) e segue o padrão do banco
-// de dados (versão 1.4, seção 7).
+// de dados (versão 1.5, seção 7).
 // As respostas ficam guardadas em G, a "gaveta" de gostos criada no script.js,
 // que vale para todas as semanas.
 
@@ -388,12 +388,18 @@ function escolha(){
     html += `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8"><b>🫙 ${assadosMarcados.map(nomeTela).join(", ")}: fica para depois.</b>
       <p>Com até 10 potes de porção, a semana não leva torta. Ela entra quando você tiver mais potes. <a href="#potes">Mudar os potes</a></p></div>`;
   }
+  // Mesmo com o mínimo, a semana pode não fechar (exemplo: poucos potes e poucos pratos feitos na hora).
+  // Na Semana 1, a página testa a montagem antes de liberar o botão (testaSemana, no monta.js).
+  const naoFecha = !fal.length && typeof testaSemana === "function" ? testaSemana() : null;
   // Aviso do que falta para o mínimo, ou a confirmação de que já dá para montar.
-  html += fal.length
+  html += naoFecha
+    ? `<div class="card" style="background:var(--tomato-l);border-color:#F2CDB9"><b>Falta pouco para a semana fechar.</b>
+        <p>${naoFecha} Com estes alimentos e os potes que você tem, a semana repetiria pratos demais. Marque mais alguns alimentos ou <a href="#potes">aumente os potes</a>.</p></div>`
+    : fal.length
     ? `<div class="card" style="background:var(--tomato-l);border-color:#F2CDB9"><b>Ainda falta pouco para montar a semana sem repetir demais:</b>
         <ul class="lista">${fal.map(x => `<li><b>${cap1(x.r.tela)}:</b> ${x.msg.join(". ")}.</li>`).join("")}</ul></div>`
     : `<div class="card" style="background:var(--green-l);border-color:#BFD9C7"><b>✓ Já dá para montar a sua semana.</b> Se quiser mais variedade, marque mais alimentos.</div>`;
-  html += `<button class="btn" id="pronto" style="width:100%;margin-top:8px" ${fal.length ? "disabled" : ""}>Montar meu cardápio ›</button>
+  html += `<button class="btn" id="pronto" style="width:100%;margin-top:8px" ${fal.length || naoFecha ? "disabled" : ""}>Montar meu cardápio ›</button>
     <button class="btn ghost" id="volta" style="width:100%;margin-top:10px">‹ Voltar</button>`;
   $app.innerHTML = html;
   // Marcar ou desmarcar um alimento: salva e redesenha, para o medidor se atualizar.
@@ -402,7 +408,7 @@ function escolha(){
     saveGostos(); const y = window.scrollY; escolha(); window.scrollTo(0,y);
   });
   // Montar: marca as perguntas como respondidas e abre o cardápio para aprovar.
-  document.getElementById("pronto").onclick = () => { if (faltas().length) return; G._visto = true; saveGostos(); S.tab = "aprovar"; go(); window.scrollTo(0,0); };
+  document.getElementById("pronto").onclick = () => { if (faltas().length || naoFecha) return; G._visto = true; saveGostos(); S.tab = "aprovar"; go(); window.scrollTo(0,0); };
   document.getElementById("volta").onclick = () => { S.tab = "refeicoes"; go(); window.scrollTo(0,0); };
 }
 // cap1(): primeira letra maiúscula (ex.: "almoço" vira "Almoço").

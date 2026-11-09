@@ -35,8 +35,14 @@
 <!-- Mensagem rápida (ex.: "Feito ✓"). Começa invisível. -->
 <div class="toast" id="toast"></div>
 
-<!-- Primeiro os dados da semana (dados-semana2.js), depois a lógica (script.js), que usa esses dados.
+<!-- Ordem dos arquivos de código:
+     1) banco.js: as fichas de todos os alimentos e pratos (o banco de dados);
+     2) escolha.js: as perguntas do começo e a tela "O que você quer comer?";
+     3) dados-semanaN.js: os dados desta semana;
+     4) script.js: a lógica, que usa todos os anteriores.
      Eles vêm por último para o HTML já existir quando o código rodar. -->
+<script src="banco.js"></script>
+<script src="escolha.js"></script>
 <script src="dados-semana2.js"></script>
 <script src="script.js"></script>
 </body>

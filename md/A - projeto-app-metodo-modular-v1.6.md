@@ -1,7 +1,7 @@
 # Projeto App · Método Modular de Alimentação
 ## Visão do produto e do negócio
 
-**Versão 1.3** · Criado em 07/11/2026 · Última atualização: 08/11/2026
+**Versão 1.6** · Criado em 07/11/2026 · Última atualização: 09/11/2026
 
 ---
 
@@ -19,13 +19,13 @@
 ---
 
 ## 1. Arquivos do projeto
-Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabética, e a versão no nome (exemplo: `Z1 - anexo-a-v1.13.md`). Toda mudança gera uma versão nova, com o número no nome e registro no histórico. Usar sempre a versão mais alta que estiver no projeto.
+Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabética, e a versão no nome (exemplo: `Z1 - anexo-a-v1.14.md`). Toda mudança gera uma versão nova, com o número no nome e registro no histórico. Usar sempre a versão mais alta que estiver no projeto.
 
 | Letra | Arquivo | Para que serve |
 | --- | --- | --- |
 | A | Este arquivo (`projeto-app-metodo-modular`) | Visão do produto, decisões e próximos passos |
 | B | Manual (`metodo-modular-alimentacao`) | As regras do método: é o que o app precisa seguir |
-| C | Padrão do banco de dados (`padrao-banco-de-dados`) | O formato e as etiquetas de cada item, para a página fazer as trocas sozinha |
+| C | Padrão do banco de dados (`padrao-banco-de-dados`) | O formato e as etiquetas de cada item, e as regras para a página montar a semana sozinha |
 | D | Fichas do banco de dados (`fichas-banco-de-dados`) | Os itens já escritos no formato do padrão, prontos para a página |
 | Z1 | Anexo A (`anexo-a`) | Os dados: catálogo, receitas e tabelas. É a fonte do banco de dados do app |
 | Z2 | Anexo B (`anexo-b`) | O registro das conversas: o que foi feito, decidido e deixado pendente |
@@ -36,9 +36,9 @@ Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabétic
 
 ## 2. A ideia em poucas linhas
 - **O problema:** quem tem dificuldade de manter uma rotina come mal, gasta com delivery e desperdiça comida.
-- **A solução:** organizar a semana. A pessoa compra, guarda e cozinha de uma vez, divide tudo em porções individuais e congela. Durante a semana, só monta o prato e esquenta.
-- **O que torna o método diferente:** não é contador de calorias nem livro de receitas. É um sistema que ensina a organizar a semana, com um estoque contado em potes, um cardápio montado a partir do estoque e uma lista de compras que sai do cardápio. A pessoa avança por níveis, aos poucos.
-- **Para quem é:** pessoas que têm dificuldade de manter uma rotina e se alimentam mal. O produto precisa ser muito simples e cobrar pouco esforço por dia.
+- **A solução:** organizar a semana. A pessoa compra, guarda e cozinha de uma vez, divide tudo em porções e congela. Durante a semana, só monta o prato e esquenta.
+- **O que torna o método diferente:** não é contador de calorias nem livro de receitas. É um sistema que ensina a organizar a semana, com um estoque contado em potes, um cardápio montado com o que a pessoa escolheu comer e uma lista de compras que sai do cardápio. A pessoa avança por níveis, aos poucos.
+- **Para quem é:** pessoas que têm dificuldade de manter uma rotina e se alimentam mal, sozinhas ou em casas de até 4 pessoas. O produto precisa ser muito simples e cobrar pouco esforço por dia.
 
 ---
 
@@ -46,20 +46,26 @@ Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabétic
 - **Estoque salvo:** a conversa esquece o estoque de uma semana para a outra; o app guarda.
 - **Lembretes:** a IA só responde quando a pessoa escreve. O app pode avisar ("hora de pôr o feijão de molho", "o frango está na cura há 20 horas", "dia da conferência").
 - **Menos digitação:** marcar o que comeu, o que sobrou e o que acabou com um toque.
+- **Escolha clara:** a pessoa marca o que quer comer e vê na hora quanta variedade o cardápio vai ter.
 
 ---
 
 ## 4. Decisões tomadas
 - **Primeiro provar que funciona, depois construir.** Ideia sozinha não se vende. O que tem valor é a prova: pessoas usando, seguindo a rotina e economizando.
 - **Começar pequeno e barato:** a primeira versão deve custar quase só tempo.
-- **Primeira versão em página na internet** (abre no navegador do celular), não um app de loja: não paga taxa de loja e usa o que o admin está aprendendo no curso de front-end.
+- **Primeira versão em página na internet** (abre no navegador do celular), não um app de loja: não paga taxa de loja e usa o que o admin está aprendendo no curso de front-end. Ela já existe, no GitHub Pages: https://ratto13.github.io/app-rotina/.
+- **A página monta a semana sozinha, sem IA,** seguindo as regras de montagem do padrão do banco de dados (seção 7). As mesmas escolhas dão sempre o mesmo cardápio. A IA fica para montar um cardápio do zero ou para pedidos fora do padrão.
+- **A pessoa escolhe o que vai comer** (tela "O que você quer comer?"), em vez de dizer só do que não gosta. Assim o cardápio não é uma surpresa. Tapioca, cuscuz, farelo de aveia e torta vêm marcados como recomendados.
+- **A página pergunta quem come em casa e quantos potes a pessoa tem.** Até 4 pessoas; criança com menos de 10 anos conta meia porção. Um pote por refeição da casa: 370 ml para 1 pessoa, 640 ml para 2 e 1040 ml para 3 ou 4.
+- **Objetivo único no teste:** comer melhor e praticidade, com a porção base do manual. No fim da semana, a pessoa diz se a porção foi pouca, certa ou muita, e o carboidrato se ajusta.
+- **O método em teste não atende quem tem restrição alimentar.** A página avisa e recomenda um nutricionista.
 
 ---
 
 ## 5. Caminho sugerido
-1. **Teste com pessoas reais (sem gastar):** 2 ou 3 pessoas usam o método por 4 semanas, num Projeto do Claude com o manual e o Anexo A. Anotar o tempo de cozinha, o dinheiro gasto, as refeições seguidas, o que desperdiçou e onde travaram.
-2. **Versão mínima:** só o estoque, o cardápio da semana e a lista de compras. A IA monta o cardápio por trás.
-3. **Depois:** lembretes, níveis, conferência semanal e o resto.
+1. **Página de teste (em andamento):** a pessoa diz quem come em casa, quantos potes tem e o que quer comer, e a página monta o cardápio, a compra, o guardar e a cozinha da semana. No fim, a pessoa envia um relatório para menumodular@gmail.com.
+2. **Teste com pessoas reais (sem gastar):** 2 ou 3 pessoas usam a página por 4 semanas. Anotar o tempo de cozinha, o dinheiro gasto, as refeições seguidas, o que desperdiçou e onde travaram.
+3. **Depois:** lembretes, níveis 2 a 4, conferência semanal, restrições alimentares e o resto.
 
 **Formas de ganhar com o método**, da mais simples para a mais complexa:
 1. **Produto digital** (guia ou curso), vendido na Hotmart.
@@ -85,9 +91,9 @@ Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabétic
 ---
 
 ## 7. Cuidados
-- **Nutricionista:** no Brasil, montar dieta é trabalho de nutricionista. O método trata de organização e de porções, não de dieta. Ter uma profissional revisando dá credibilidade e protege o projeto.
+- **Nutricionista:** no Brasil, montar dieta é trabalho de nutricionista. O método trata de organização e de porções, não de dieta. Ter uma profissional revisando dá credibilidade e protege o projeto. Precisam de revisão a tabela de proteína, a meia porção da criança e o ajuste da porção.
 - **Marca:** registrar o nome quando estiver definido.
-- **Dados das pessoas:** o app guarda gostos, peso e rotina, por isso precisa seguir a LGPD.
+- **Dados das pessoas:** o app guarda gostos, quem come em casa e a rotina, por isso precisa seguir a LGPD. Na página de teste, tudo fica salvo só no navegador da pessoa.
 - **Público:** quem larga rotinas também larga apps. Cada tela precisa ser simples e rápida.
 
 **Pendências**
@@ -105,6 +111,9 @@ Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabétic
 | 1.1 | 08/11/2026 | Arquivos com a versão no nome, inclusive este (usar sempre a mais alta); relatório de receitas e lacunas na lista de arquivos; a IA pode alterar os arquivos do método quando o admin pedir |
 | 1.2 | 08/11/2026 | Lista de arquivos com as letras, o padrão e as fichas do banco de dados (sai o relatório); o método fica neste projeto, com confirmação do admin antes de mudar; instruções do projeto iguais às que estão no Claude |
 | 1.3 | 08/11/2026 | Anexo B na lista de arquivos, com os nomes Z1 e Z2; leitura do Anexo B no começo de cada conversa; pasta `md` do repositório; instruções do projeto atualizadas |
+| 1.4 | 09/11/2026 | Decisões de 09/11: a página monta a semana sozinha, sem IA, a partir do que a pessoa escolhe; pessoas, potes e objetivo único no teste; caminho sugerido com a página de teste em andamento; cuidados com a revisão da nutricionista e os dados salvos no navegador; instruções do projeto com o arquivo de fichas |
+| 1.5 | 09/11/2026 | Cópia das instruções do projeto com os arquivos novos do site: `banco.js` e `escolha.js` |
+| 1.6 | 09/11/2026 | Cópia das instruções do projeto com o arquivo novo do site: `monta.js` |
 
 ---
 
@@ -113,7 +122,7 @@ Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabétic
 >
 > Linguagem simples, sem jargão técnico. Respostas diretas ao que foi perguntado, sem misturar outros assuntos.
 >
-> Arquivos do método (manual, Anexo A e padrão do banco de dados):
+> Arquivos do método (manual, Anexo A, padrão e fichas do banco de dados):
 > - Não altere sem confirmar comigo. Se um pedido for contra uma regra do manual, avise antes de mudar.
 > - Toda mudança gera nova versão, com o número no nome do arquivo (ex.: anexo-a-v1.12.md) e registro no histórico.
 > - Não adicione nem apague arquivos do Projeto. Entregue o arquivo para eu baixar e atualizar.
@@ -123,7 +132,7 @@ Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabétic
 >
 > Site de teste:
 > - Fica no GitHub (ratto13/app-rotina) e é publicado pelo GitHub Pages.
-> - Arquivos: index.html e home.css (home); semana1.html, semana2.html…; dados-semanaN.js (dados de cada semana); script.js (lógica, igual para todas as semanas); style.css.
+> - Arquivos: index.html e home.css (home); semana1.html, semana2.html…; banco.js (fichas de todos os alimentos e pratos, gerado do arquivo de fichas); escolha.js (perguntas do começo e tela "O que você quer comer?"); monta.js (monta a Semana 1 sozinha, a partir das respostas: cardápio, compra, guardar e cozinha); dados-semanaN.js (dados de cada semana; na Semana 1, só o modelo); script.js (lógica, igual para todas as semanas); style.css.
 > - Estou aprendendo front-end: comente o código bloco por bloco, em português.
 > - Ao mudar o site, entregue só os arquivos que mudaram, diga quais substituir e passe os comandos do git.
 > - O site segue as regras do manual. O método está em teste e não serve para pessoas com restrição alimentar.

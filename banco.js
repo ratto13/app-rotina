@@ -1,13 +1,13 @@
 // =====================================================================
 // banco.js · Banco de dados do Método Modular
 // ---------------------------------------------------------------------
-// O que é: todas as fichas do arquivo "D - fichas-banco-de-dados" (versão 1.2),
-// no formato do padrão do banco de dados (versão 1.4, seção 10).
+// O que é: todas as fichas do arquivo "D - fichas-banco-de-dados" (versão 1.3),
+// no formato do padrão do banco de dados (versão 1.5, seção 10).
 // Para que serve: a página lê este arquivo para montar a tela de escolha,
 // o cardápio, a compra, o guardar e a cozinha, sem IA.
 // Importante: este arquivo é gerado a partir das fichas. Para mudar um
 // alimento, mude primeiro a ficha (e o Anexo A) e depois gere o arquivo de novo.
-// Nesta entrega, nenhuma página usa o banco ainda: nada muda na tela.
+// Quem usa: a tela de escolha (escolha.js) e a montagem da Semana 1 (monta.js).
 // =====================================================================
 
 // ---------------------------------------------------------------------
@@ -4891,7 +4891,8 @@ const BANCO = {
           "id": "cheiro-verde",
           "qtd": null,
           "unidade": "a gosto",
-          "texto": "a gosto"
+          "texto": "a gosto",
+          "opcional": true
         }
       ],
       "rende": "4 porções",
@@ -4917,7 +4918,7 @@ const BANCO = {
         "origem animal",
         "contém ovo"
       ],
-      "obs": "serve na ceia"
+      "obs": "serve na ceia; o cheiro-verde é do nível 2 e entra quando houver"
     },
     // Patê de ricota
     {
@@ -7842,7 +7843,8 @@ const BANCO = {
           "id": "limao-tahiti",
           "qtd": 0.5,
           "unidade": "unidade",
-          "texto": "½ unidade"
+          "texto": "½ unidade",
+          "opcional": true
         },
         {
           "id": "sal",
@@ -7891,7 +7893,8 @@ const BANCO = {
           "id": "crisps-calabresa",
           "qtd": 1,
           "unidade": "colher de sopa",
-          "texto": "1 colher de sopa"
+          "texto": "1 colher de sopa",
+          "opcional": true
         },
         {
           "id": "azeite",

@@ -1,7 +1,7 @@
 # Método Modular de Alimentação
 ## Manual para guiar uma pessoa na alimentação do dia a dia
 
-**Versão 3.17** · Última atualização: 08/11/2026
+**Versão 3.18** · Última atualização: 09/11/2026
 
 ---
 
@@ -85,7 +85,7 @@ Explicar, conversando e tirando dúvidas, sem despejar tudo de uma vez:
 No meio do bate-papo, conhecer a pessoa, em até duas rodadas curtas.
 
 *Rodada 1: a pessoa*
-1. Quantas pessoas comem em casa e qual o objetivo de cada uma (exemplo: ganhar massa, emagrecer, só comer melhor).
+1. Quantas pessoas comem em casa, separando adultos e crianças com menos de 10 anos (seção 0.11), e qual o objetivo de cada uma (exemplo: ganhar massa, emagrecer, só comer melhor).
 2. Peso corporal, só quando o objetivo for ganhar massa, para calcular a cota de proteína (seção 5.4).
 3. O que gosta de comer e o que não gosta: pratos, carnes, legumes e frutas.
 4. Alergias ou restrições. Se a pessoa disser que tem alguma, dar o aviso abaixo, com calma e sem culpa, e não montar cardápio adaptado para a restrição.
@@ -95,7 +95,7 @@ No meio do bate-papo, conhecer a pessoa, em até duas rodadas curtas.
 
 *Rodada 2: a casa*
 1. O que já existe em casa (despensa, geladeira e freezer), com a quantidade aproximada de cada item.
-2. O que tem de equipamento: tamanho do freezer, quantos potes, balança, forno, airfryer, micro-ondas, liquidificador e processador. Se a resposta for vaga ("tenho tudo"), confirmar os itens que o método usa (Anexo A, seção A.5.1): balança, forminhas de gelo com tampa, saquinhos com fecho, plástico-filme, papel-toalha e etiquetas. O que faltar entra na lista de compras.
+2. O que tem de equipamento: tamanho do freezer, quantos potes de cada tamanho (seção 4.6), balança, forno, airfryer, micro-ondas, liquidificador e processador. Se a resposta for vaga ("tenho tudo"), confirmar os itens que o método usa (Anexo A, seção A.5.1): balança, forminhas de gelo com tampa, saquinhos com fecho, plástico-filme, papel-toalha e etiquetas. O que faltar entra na lista de compras.
 3. Horários de trabalho e de sono, e em quais dias consegue fazer a compra e a cozinha.
 
 **Gostos:** entram no cardápio desde a primeira semana. Um alimento de que a pessoa não gosta é trocado por outro do mesmo módulo, e os pratos preferidos são adaptados aos módulos (seção 0.8).
@@ -138,9 +138,9 @@ A partir da lista de aprendizado, o método cresce aos poucos, junto com os pote
 O método depende dos [pote porção]. Eles entram aos poucos, conforme a pessoa consegue pôr o método em prática.
 
 **Plano de potes**
-- **Tamanho da semana pelos potes:** a tabela usa os **potes por pessoa**. Com mais de uma pessoa, dividir o total de potes pelo número de pessoas antes de escolher a faixa.
+- **Tamanho da semana pelos potes:** a tabela conta os **potes de porção da casa**. Cada pote guarda uma refeição para todos que comem nela, no tamanho certo para o número de pessoas (seção 4.6). Por isso, o número de potes não é dividido pelo número de pessoas.
 
-| Potes por pessoa | [pote da praça] | [pote porção] | O que entra |
+| Potes de porção da casa | [pote da praça] | [pote porção] | O que entra |
 | --- | --- | --- | --- |
 | Até 10 | 3 | O restante | Lista de aprendizado pequena (Anexo A, seção A.6.1): almoço pronto, o resto feito na hora com [recheado] e [prato de ovos]; sem [assado de forma] |
 | De 11 a 25 | 4 a 6 | O restante, com 1 de folga | Almoço e parte das jantas prontos, com 1 legume [branqueado]; [assado de forma] em meia receita (4 pedaços), só se sobrarem 4 potes; senão, [recheado] no lanche da tarde |
@@ -226,6 +226,7 @@ Toda semana, antes da compra, fazer a **conferência**. É a conversa que manté
 3. **Enjoou** de algum prato?
 4. **Quanto tempo** levou a cozinha?
 5. **Como está a rotina:** conseguiu seguir quase tudo, metade ou pouco?
+6. **A porção foi pouca, certa ou muita?** Com crianças em casa, perguntar em separado para os adultos e para as crianças.
 
 **O que fazer com as respostas**
 
@@ -238,6 +239,8 @@ Toda semana, antes da compra, fazer a **conferência**. É a conversa que manté
 | Não deu tempo | Simplificar a próxima cozinha: menos preparos, mais itens de pote da praça, [recheado] e [prato de ovos]. |
 | Seguiu quase tudo | Manter e, se o nível estiver estável, sugerir uma novidade (seção 3.4). |
 | Seguiu pouco | Não avançar. Repetir a semana com menos preparos e perguntar o que atrapalhou. |
+| Porção pouca | Na próxima semana, aumentar em ¼ a porção de [carboidrato] (exemplo: arroz de 170 g para cerca de 210 g). A [proteína] não muda (seção 5.4). |
+| Porção muita | Na próxima semana, diminuir em ¼ a porção de [carboidrato] (exemplo: arroz de 170 g para cerca de 130 g). A [proteína] não muda (seção 5.4). |
 
 Depois da conferência, nesta ordem: atualizar o Estoque atual, montar o cardápio da semana e confirmar com a pessoa, e só então enviar a lista de compras com o armazenamento. Ao final, entregar o Estoque atual atualizado (seção 9.3).
 
@@ -261,10 +264,13 @@ Quando a pessoa comprou e não cozinhou, ou quando muita coisa estragou.
 **Na conversa:** tratar como parte normal do processo, sem cobrança. Na semana seguinte, repetir o nível com menos preparos. Depois de uma semana de resgate, a contagem das semanas estáveis (seção 3.4) recomeça.
 
 ### 0.11 Mais de uma pessoa
-- **Multiplicam:** a compra, as porções, os kits e os potes.
+- **Até 4 pessoas por casa.**
+- **Crianças:** criança com menos de 10 anos conta como **meia porção**. Exemplo: 2 adultos e 2 crianças = 3 porções. É uma estimativa, para revisar com uma nutricionista, e é ajustada na conferência da semana (seção 0.9, pergunta 6).
+- **Multiplicam pelo número de porções:** a compra, as porções e os kits.
+- **Os potes não multiplicam:** cada [pote porção] guarda uma refeição para a casa toda, e o que muda é o tamanho do pote (seção 4.6).
 - **Não multiplicam igual:** o tempo de cozinha (2 pessoas: cerca de 1,5 vez o tempo de 1 pessoa, porque os preparos são os mesmos) e as receitas de forma (a [torta] vira 2 receitas ou uma forma maior).
-- **Limite de potes:** a faixa da tabela da seção 0.6 é escolhida pelos potes por pessoa; o limite total vale para a casa toda. Se não couber, cozinhar para menos dias e completar com [recheado] e [prato de ovos].
-- **Objetivos diferentes:** as porções de [carboidrato] mudam por pessoa (seção 5.6). A proteína segue a cota de cada uma. Etiquetar os potes com o nome quando as porções forem diferentes.
+- **Limite de potes:** a faixa da tabela da seção 0.6 é escolhida pelos potes de porção da casa. Se não couber, cozinhar para menos dias e completar com [recheado] e [prato de ovos].
+- **Objetivos diferentes:** as porções de [carboidrato] mudam por pessoa (seção 5.6). A proteína segue a cota de cada uma. Quando as porções forem diferentes, cada pessoa tem os seus potes de 370 ml, etiquetados com o nome.
 
 ### 0.12 Variedade: recado obrigatório
 **Busque sempre a variabilidade.** Um cardápio que repete o mesmo prato todos os dias é um erro, mesmo que esteja certo nas quantidades. Antes de apresentar qualquer cardápio:
@@ -667,14 +673,19 @@ Montados ou preparados no momento da refeição, com itens do estoque.
 
 | Módulo | Descrição | Local |
 | --- | --- | --- |
-| [pote porção] | Pote hermético de uma refeição | [freezer] |
-| [pote médio] | Pote hermético médio. Na geladeira, é usado como [pote da praça] | [geladeira] |
+| [pote porção]* | Pote hermético de uma refeição da casa: 370 ml para 1 pessoa, 640 ml para 2 e 1040 ml para 3 ou 4 | [freezer] |
+| [pote médio] | Pote hermético médio, de 640 ml. Na geladeira, é usado como [pote da praça] | [geladeira] |
 | [pote da praça]* | [pote médio] usado todos os dias, com itens prontos à mão para montar as refeições | [geladeira] |
 | [pote seco]* | Pote hermético grande, opcional | [despensa] |
 | [saquinho] | Saco com fecho, próprio para alimento | [freezer] |
 | [cubo] | Forminha de gelo com tampa, contada por forminha | [freezer] |
 | [original]* | Embalagem de fábrica | Todos |
 
+\* **[pote porção]:** o método foi pensado em potes de 370 ml, os mais comuns no mercado, junto com os de 640 ml e 1040 ml. O tamanho segue o número de porções da casa (seção 0.11):
+    - 1 porção (ou 1 e meia): 370 ml;
+    - 2 porções (ou 2 e meia): 640 ml;
+    - 3 a 4 porções: 1040 ml.
+    - **Quando a refeição da casa não cabe** (o pote precisa de folga no topo, seção 12.3): dividir em potes iguais, nunca em tamanhos diferentes. No lugar do pote de 1040 ml, usar 2 potes de 640 ml (exemplo: polenta para 4 pessoas, cerca de 1,1 kg), ou 3, se ainda não couber.
 \* **[pote da praça]:** o nome vem da **praça**, termo da cozinha profissional para o espaço de trabalho organizado e para tudo o que fica pronto e à mão (seção 7.1). Antes se chamava "pote aberto", nome que podia ser entendido como um pote sem tampa: ele é um pote hermético comum. Guarda folhas, cenoura ralada, mamão picado, maçã, queijos, frios e crisps de calabresa. São também a fonte dos recheios de [recheado].
 \* **[pote seco]:** os secos são guardados conforme a organização de cada pessoa.
 \* **[original]:** itens de base guardados como vieram (lata, garrafa, caixa de leite, pão de forma, ovos).
@@ -808,7 +819,7 @@ Um item é econômico quando reúne:
 
 ### 6.2 Regras
 - As quantidades da lista sugerida e das etapas depois da compra são para 1 pessoa. Para mais pessoas, seguir a seção 0.11.
-- Na primeira compra, usar a lista sugerida (Anexo A, seção A.6.1), retirando o que já existe em estoque.
+- Na primeira compra, a lista sai **do que a pessoa escolheu comer**, entre os itens da lista sugerida do nível 1 (Anexo A, seção A.6.1). Entra só o que os pratos escolhidos precisam, retirando o que já existe em estoque.
 - Comprar apenas o que falta para o cardápio da semana, conferido no Estoque atual (seção 9.3), incluindo os itens de base em "pouco" ou "acabou".
 - Comprar perto da etapa de cozinha, nos dias livres da pessoa (sugestão: sexta à noite ou sábado).
 - A partir da segunda semana, a lista depende da execução da semana anterior: o que sobrou, o que faltou e o que estragou ajustam as quantidades (seção 3.3).
@@ -1114,3 +1125,4 @@ A validade de cada preparo está no Anexo A, seção A.5.5, e a de cada item, no
 | 3.15 | 08/11/2026 | Relatório de receitas e lacunas: porção da [panelada] corrigida para cerca de 200 g (105 g de proteína e 100 g de molho), como no Anexo A; porção do [salgado assado] em cerca de 3 unidades |
 | 3.16 | 08/11/2026 | Decisão do admin sobre o tempero do que é guardado cru: o que tem receita ([hambúrguer], [almôndega], nhoque) segue a receita, com o tempero; a carne só porcionada, sem receita (bife fino, filé de peixe, linguiça), continua sem tempero (seções 4.4 e 8.2) |
 | 3.17 | 08/11/2026 | Decisão do admin: alergias e restrições ficam para uma etapa avançada do projeto. Nesta fase, o método não atende quem tem restrição alimentar; a IA dá um aviso e recomenda um nutricionista, sem montar cardápio adaptado (seções 0.1 e 0.4) |
+| 3.18 | 09/11/2026 | Decisões do admin: a primeira compra sai do que a pessoa escolheu comer, entre os itens da lista sugerida do nível 1 (6.2); até 4 pessoas por casa, com criança de menos de 10 anos contando meia porção, como estimativa (0.4 e 0.11); potes de 370, 640 e 1040 ml, um pote por refeição da casa, com potes iguais quando não cabe, e pote da praça de 640 ml (4.6); plano de potes conta os potes da casa, sem dividir por pessoa (0.6 e 0.11); pergunta da porção na conferência, com ajuste de ¼ do carboidrato (0.9) |

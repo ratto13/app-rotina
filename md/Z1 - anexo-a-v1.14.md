@@ -1,7 +1,7 @@
 # Anexo A
 ## Banco de dados do Método Modular de Alimentação
 
-**Versão 1.13** · Última atualização: 08/11/2026 · Usado com o manual versão 3.16
+**Versão 1.14** · Última atualização: 09/11/2026 · Usado com o manual versão 3.18
 
 ---
 
@@ -467,7 +467,7 @@ Novos recheios para o [recheado]. Cada patê é feito na etapa de cozinha e guar
 **Uso:** cerca de 40 g por [lanche natural], [wrap], [tapioca] ou torrada. O patê de ovo e o de ricota servem também na ceia.
 
 #### Salpicão\*
-150 g de frango [desfiado] + 50 g de cenoura ralada + ½ maçã picada + 2 colheres de sopa de milho + 2 colheres de sopa de maionese. Rende 2 porções. Guardar num [pote da praça], na [geladeira], por até 2 dias. Janta fria com torrada, ou recheio de [wrap].
+150 g de frango [desfiado] + 50 g de cenoura ralada + ½ maçã picada + 2 colheres de sopa de maionese. Rende 2 porções. Guardar num [pote da praça], na [geladeira], por até 2 dias. Janta fria com torrada, ou recheio de [wrap]. Fica no nível 1, sem milho; a partir do nível 2, pode levar 2 colheres de sopa de milho.
 
 #### Arroz e feijão na hora\*
 Pratos feitos em 5 minutos com os potes de arroz e de feijão do estoque. Servem de almoço, com a proteína do dia.
@@ -999,6 +999,8 @@ Valores aproximados, para somar a cota do dia (seção 5.4 do manual). Revisar c
 **Lista completa do nível 1:**
 Lista de início de estoque para o nível 1, calculada para 1 pessoa e 1 semana. Usa itens de cesta básica, baratos e de preparo simples.
 
+**É também a lista de opções da escolha:** a pessoa escolhe o que quer comer entre estes itens, e a compra sai só do que os pratos escolhidos precisam (seção 6.2 do manual). Os itens marcados com † são opções a mais, que entram só quando escolhidos: os frios e queijos do rodízio (seção 0.12 do manual), os itens do caldo verde e o pão francês.
+
 A lista pode ser variada conforme o gosto: qualquer item pode ser trocado por outro do mesmo grupo de alimentos e com o mesmo papel no prato. Antes de usá-la, conferir o que já existe em estoque e retirar esses itens.
 
 **🥬 Hortifrúti**
@@ -1020,6 +1022,7 @@ A lista pode ser variada conforme o gosto: qualquer item pode ser trocado por ou
 *Folhas*
 - Repolho: 1 unidade
 - Alface: 1 unidade
+- Couve†: 1 maço
 
 **🥫 Mercearia**
 
@@ -1027,6 +1030,7 @@ A lista pode ser variada conforme o gosto: qualquer item pode ser trocado por ou
 - Arroz: 1 kg
 - Feijão carioca: 1 kg
 - Espaguete: 500 g
+- Pré-purê de batata†: 1 pacote
 
 *Farinhas*
 - Farinha de trigo: 1 kg
@@ -1042,6 +1046,7 @@ A lista pode ser variada conforme o gosto: qualquer item pode ser trocado por ou
 - Farinha láctea: 1 lata
 - Torrada: 1 pacote
 - Pão de forma: 1 pacote
+- Pão francês†: 6 unidades
 - Açúcar: 1 kg
 
 *Leite e ovos*
@@ -1067,13 +1072,15 @@ A lista pode ser variada conforme o gosto: qualquer item pode ser trocado por ou
 **🧊 Resfriados**
 - Calabresa: 250 g
 - Muçarela: 200 g
+- Queijo prato†: 200 g
 - Parmesão ralado: 1 pacote
 - Manteiga: 200 g
 - Presunto: 200 g
+- Peito de peru†: 200 g
 - Polpa de fruta congelada: 4 pacotes de 100 g
 
 ### A.6.2 Exemplo de armazenamento
-Feito com a lista sugerida (seção A.6.1), no formato de resposta da etapa (seção 0.14 do manual).
+Feito com a lista sugerida (seção A.6.1), sem os itens marcados com †, no formato de resposta da etapa (seção 0.14 do manual).
 
 **1. ⚡ Guarda rápida**  
 Guarde na geladeira até a etapa de cozinha.
@@ -1508,3 +1515,4 @@ Decisões tomadas pela IA porque o manual ou o anexo não respondiam (seções 0
 | 1.11 | 08/11/2026 | Relatório de receitas e lacunas: tabelas soltas removidas do banco de variações (A.4.2) e do exemplo de cardápio (A.6.5); purê com 6 porções de 170 g, como no manual; panelada com porção de cerca de 200 g; almôndegas por porção (5 a 6) e rendimento da receita; "Polvilho doce" como nome oficial; lista sugerida com orégano, açúcar em Matinais e 36 ovos (máximo da compra base); açúcar, pimenta-do-reino e orégano nos exemplos de armazenamento e de estoque |
 | 1.12 | 08/11/2026 | Banco de dados ampliado: 4 itens novos no catálogo; 5 mixes de kit; 30 receitas novas ou completadas (porções preparadas, assados de forma, paneladas, mingaus, patês, sopas, arroz e feijão na hora, grelhados); validades na geladeira, inclusive depois de descongelar; tabela de proteína por porção (A.5.6). Tudo marcado com \* para revisão (seção A.7) |
 | 1.13 | 08/11/2026 | Tempero do que é guardado cru resolvido pelo admin (manual 3.16): receitas guardadas cruas seguem a receita, com o tempero; carne só porcionada, sem receita, vai sem tempero. Lacuna do [hambúrguer] retirada da seção A.7 |
+| 1.14 | 09/11/2026 | Decisões do admin (manual 3.18): a lista completa do nível 1 também é a lista de opções da escolha, com a compra saindo só do que foi escolhido; entram nela, como opções marcadas com †, couve, pré-purê de batata, pão francês, queijo prato e peito de peru; salpicão no nível 1 sem milho (o milho entra a partir do nível 2) |
