@@ -37,6 +37,10 @@ const FAIXAS = [
 ];
 // faixa(): em qual linha da tabela a casa está, pelos potes de porção do tamanho certo.
 const faixa = () => FAIXAS.find(f => potes(tamanhoPote()) <= f.ate);
+// semAssado(): com até 10 potes de porção, a semana não leva assado de forma (torta),
+// como manda a tabela do plano de potes (manual, seção 0.6). A página avisa a pessoa.
+const semAssado = () => potes(tamanhoPote()) <= 10;
+const ehAssado = item => item.modulo === "assado de forma";
 // A semana completa do nível 1 usa cerca de 37 potes de porção e 9 potes da praça (Anexo A, seção A.6.1).
 const POTES_SEMANA_COMPLETA = {porcao: 37, praca: 9};
 // SUGESTAO_INICIO: quantos potes sugerir para começar (manual, seção 0.6):
@@ -110,7 +114,9 @@ const USADOS = new Set(BANCO.pratos.flatMap(p => p.componentes.map(c => c.id)));
 // Entram os pratos na hora e os preparos que vão direto para o prato, como a torta.
 function candidatos(ref){
   const pratos = BANCO.pratos.filter(p => p.nivel <= NIVEL && p.refeicoes.includes(ref) && disponivel(p.id));
-  const preparos = BANCO.preparos.filter(p => p.nivel <= NIVEL && p.refeicoes.includes(ref) && !USADOS.has(p.id) && disponivel(p.id));
+  // Com até 10 potes, o assado de forma (torta) não entra (semAssado).
+  const preparos = BANCO.preparos.filter(p => p.nivel <= NIVEL && p.refeicoes.includes(ref) && !USADOS.has(p.id) && disponivel(p.id)
+    && !(semAssado() && ehAssado(p)));
   return [...pratos, ...preparos];
 }
 // tipoPrato(): separa o que é bebida, o que é acompanhamento de vegetal e o que é o prato principal.
@@ -303,6 +309,7 @@ function potesTela(){
     <div class="card" style="background:var(--blue-l);border-color:#C8DBE8">
       <b>Na sua casa (${fmtPorcao(porcoesCasa())}), cada refeição vai num pote de ${ml} ml.</b>
       <p><b>Tamanho da sua semana:</b> ${f.nome}. ${f.texto}</p>
+      ${semAssado() ? `<p><b>A torta fica para depois:</b> ela vem recomendada, mas só entra no cardápio quando você tiver mais de 10 potes de porção.</p>` : ""}
     </div>
     <div class="card">
       <b>Para a semana completa do nível 1</b>
@@ -364,7 +371,8 @@ function escolha(){
     html += `<div class="grp"><div class="sec-t">${g}</div>${med ? `<span class="med ${med.cls}">${med.txt}</span>` : ""}</div>
       <div class="card" style="padding:4px 12px">
       ${n1.map(i => `<div class="chk ${escolheu(i.id) ? "on esc" : ""}" data-esc="${i.id}"><div class="box">${escolheu(i.id) ? "✓" : ""}</div>
-        <div class="lbl" style="text-decoration:none">${esc(nomeTela(i))}${i.recomendado ? ` <span class="selo">⭐ recomendado</span>` : ""}</div></div>`).join("")}
+        <div class="lbl" style="text-decoration:none">${esc(nomeTela(i))}${i.recomendado ? ` <span class="selo">⭐ recomendado</span>` : ""}
+          ${semAssado() && ehAssado(i) ? `<div class="muted" style="font-size:.8rem">Não entra nesta semana: precisa de mais de 10 potes de porção.</div>` : ""}</div></div>`).join("")}
       </div>`;
     // Níveis 2 a 4: fechados, só para ver, separados por nível.
     if (depois.length){
@@ -374,6 +382,12 @@ function escolha(){
         <p class="muted" style="font-size:.85rem">Libera quando você avançar de nível.</p></details>`;
     }
   });
+  // Aviso da torta: marcada, mas fora da semana por causa do número de potes.
+  const assadosMarcados = [...BANCO.preparos].filter(i => ehAssado(i) && escolheu(i.id));
+  if (semAssado() && assadosMarcados.length){
+    html += `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8"><b>🫙 ${assadosMarcados.map(nomeTela).join(", ")}: fica para depois.</b>
+      <p>Com até 10 potes de porção, a semana não leva torta. Ela entra quando você tiver mais potes. <a href="#potes">Mudar os potes</a></p></div>`;
+  }
   // Aviso do que falta para o mínimo, ou a confirmação de que já dá para montar.
   html += fal.length
     ? `<div class="card" style="background:var(--tomato-l);border-color:#F2CDB9"><b>Ainda falta pouco para montar a semana sem repetir demais:</b>
