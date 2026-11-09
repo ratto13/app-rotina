@@ -249,7 +249,7 @@ function preparar(){
     });
     // Aviso de validade curta: aparece logo depois de guardar, para a pessoa já saber o que usar primeiro.
     html += `<div class="card" style="background:var(--tomato-l);border-color:#F2CDB9"><b>⏰ Use primeiro:</b> ${SEMANA.usePrimeiro}</div>`;
-    html += `<div class="card" style="background:var(--blue-l);border-color:#C8DBE8"><b>Total de potes:</b> ${SEMANA.potesGuardar}</div>
+    html += `<div class="card" style="background:var(--blue-l);border-color:#C8DBE8"><b>Total de potes:</b> ${SEMANA.potesGuardar}${SEMANA.avisoPraca ? `<p>${SEMANA.avisoPraca}</p>` : ""}</div>
       <button class="btn" data-p="cozinha" style="width:100%">Ir para a Cozinha ›</button>`;
   // Sub-aba COZINHA: percorre os 3 blocos de COZ.
   } else {
@@ -352,13 +352,15 @@ function tabela(d){
 
 // TELA APROVAR: mostra o cardápio da semana para a pessoa aprovar antes da compra.
 // É o mesmo passo do manual: a lista de compras só vem depois que o cardápio é confirmado.
-// Nesta entrega, o cardápio ainda é o fixo do arquivo de dados; o aviso deixa isso claro.
+// Na Semana 1, o cardápio é o montado pelo monta.js com as escolhas da pessoa.
+// Se faltarem potes da praça, a tela avisa (SEMANA.avisoPraca).
 function aprovar(){
   $app.innerHTML = `<span class="pill">Semana ${SEMANA.num}</span>
     <h1>Seu cardápio da semana</h1>
     ${typeof MONTADA !== "undefined" && MONTADA
       ? `<div class="card" style="background:var(--green-l);border-color:#BFD9C7"><b>🧩 Montado com o que você escolheu</b><p>Cardápio para <b>${fmtPorcao(porcoesCasa())}</b>, só com os alimentos que você marcou. A lista de compras, o guardar e a cozinha saem dele.</p></div>`
       : `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8"><b>Modelo da semana</b><p>Este é o cardápio de exemplo. Responda as perguntas para montar o seu.</p></div>`}
+    ${SEMANA.avisoPraca ? `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8"><b>🫙 Potes da praça</b><p>${SEMANA.avisoPraca}</p></div>` : ""}
     <p>Cardápio com <b>${nRef()} refeições por dia</b>. Dê uma olhada: se estiver do seu gosto, aprove e siga para a lista de compras.</p>
     ${tabela(null)}
     <p class="muted">A lista de compras é feita a partir deste cardápio. Depois, na aba Cardápio, você vê cada dia completo, com as bebidas.</p>
