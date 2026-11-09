@@ -1,7 +1,11 @@
 /* ============ LÓGICA DAS PÁGINAS DAS SEMANAS ============ */
 // Este arquivo é o mesmo para todas as semanas. Os dados de cada semana (lista de compras,
 // passos, cardápio...) ficam em dados-semana1.js, dados-semana2.js e assim por diante.
-// Cada página carrega o arquivo de dados dela antes deste.
+// As perguntas do começo (quem come em casa, potes, refeições e o que quer comer)
+// ficam no escolha.js, que usa o banco de dados do banco.js.
+// Na Semana 1, o monta.js monta a semana sozinho a partir das respostas (cardápio, compra,
+// guardar e cozinha) e coloca tudo nas mesmas listas do arquivo de dados.
+// Cada página carrega, nesta ordem: banco.js, escolha.js, o arquivo de dados dela, monta.js (só na Semana 1) e este.
 
 // FREEZER: a lista de tudo o que pode estar no freezer.
 // Cada item tem uma chave curta (ex.: arroz), o nome que aparece na tela (n) e a unidade (u).
@@ -29,6 +33,10 @@ const MEALS = ["☕|Café da manhã","🥤|Lanche da manhã","🍽️|Almoço","
 // EMAIL: para onde os relatórios das pessoas do teste são enviados.
 const EMAIL = "menumodular@gmail.com";
 
+// FZ(): a lista do freezer que vale agora. Na Semana 1, depois das perguntas,
+// é a lista montada pelo monta.js (FREEZER_SEMANA); nas outras semanas, a lista fixa acima.
+const FZ = () => (typeof MONTADA !== "undefined" && MONTADA && !MONTADA.erro) ? FREEZER_SEMANA : FREEZER;
+
 // DAILY: itens comprados toda semana, mesmo que ainda tenha em casa.
 const DAILY = ["Leite","Ovos","Pão de forma","Torrada"];
 
@@ -48,64 +56,15 @@ try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(blank(),
 // save(): grava o estado S no navegador. É chamada sempre que a pessoa marca algo.
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 
-/* ============ GOSTOS E TROCAS ============ */
-// GOSTOS: as opções de "não gosto" da tela Cardápio e gostos.
-// Nesta versão de teste, só entram os pratos feitos na hora (bases e recheios),
-// porque trocar esses não muda a cozinha nem o estoque do freezer.
-// compra = o item da lista de compras que sai quando a pessoa marca que não gosta.
-const GOSTOS = [
-  {id:"tapioca", n:"Tapioca e crepioca", g:"Bases do café, dos lanches e da ceia", compra:"Tapioca (goma)"},
-  {id:"cuscuz",  n:"Cuscuz",             g:"Bases do café, dos lanches e da ceia", compra:"Flocão de milho"},
-  {id:"torrada", n:"Torrada",            g:"Bases do café, dos lanches e da ceia", compra:"Torrada"},
-  {id:"pao",     n:"Pão de forma e lanche natural", g:"Bases do café, dos lanches e da ceia", compra:"Pão de forma"},
-  {id:"mingau",  n:"Mingau de aveia",    g:"Ceia"},
-  {id:"atum",    n:"Atum",               g:"Recheios e saladas", compra:"Atum"}
-];
-// Nome de cada base, como aparece no cardápio, e a ordem em que elas entram no lugar de outra.
-const BASE_NOME = {torrada:"torrada", pao:"pão de forma", cuscuz:"cuscuz", tapioca:"tapioca"};
-const BASE_ORDEM = ["torrada","pao","cuscuz","tapioca"];
-
-// Os gostos ficam numa gaveta própria, que vale para todas as semanas.
+/* ============ RESPOSTAS DAS PERGUNTAS ============ */
+// As respostas (pessoas, potes, refeições por dia e o que a pessoa quer comer)
+// ficam numa gaveta própria, que vale para todas as semanas.
+// As telas das perguntas estão no escolha.js.
 const KEY_GOSTOS = "metodoModular.gostos";
 let G = {};
 try { G = JSON.parse(localStorage.getItem(KEY_GOSTOS) || "{}"); } catch(e){}
 function saveGostos(){ try { localStorage.setItem(KEY_GOSTOS, JSON.stringify(G)); } catch(e){} }
-const naoGosta = id => !!G[id];
 
-// alt(): escolhe a base que entra no lugar de outra: a primeira da ordem que a pessoa gosta.
-// Se a pessoa não gosta de nenhuma, devolve null e nada é trocado.
-function alt(tirar){
-  const k = BASE_ORDEM.find(b => b !== tirar && !naoGosta(b));
-  return k ? BASE_NOME[k] : null;
-}
-// cap(): deixa a primeira letra maiúscula quando o texto original começava com maiúscula.
-const cap = (orig, novo) => /^[A-ZÀ-Ú]/.test(orig) ? novo[0].toUpperCase()+novo.slice(1) : novo;
-
-// ajusta(): recebe o texto de uma refeição e devolve o texto com as trocas dos gostos.
-// Cada troca usa uma expressão regular (regex) para achar a palavra, com ou sem maiúscula.
-function ajusta(t){
-  if (naoGosta("mingau")){
-    const b = alt(null);
-    t = t.replace(/^Mingau de aveia com (.*)$/, (m, resto) => `Leite morno, ${b}, ${resto}`)
-         .replace(/^Mingau e (.*)$/, (m, resto) => `Leite, ${b} e ${resto}`)
-         .replace(/^Mingau de (.*)$/, (m, resto) => `Leite, ${b}, ${resto}`);
-  }
-  if (naoGosta("atum")) t = t.replace(/com atum/g, "com 2 ovos cozidos");
-  if (naoGosta("tapioca") && alt("tapioca")){
-    t = t.replace(/crepioca (com|de) /gi, m => cap(m, alt("tapioca")+" com ovo e "));
-    t = t.replace(/tapioca de /gi, m => cap(m, alt("tapioca")+" com "));
-    t = t.replace(/tapioca/gi, m => cap(m, alt("tapioca")));
-  }
-  if (naoGosta("cuscuz") && alt("cuscuz")) t = t.replace(/cuscuz/gi, m => cap(m, alt("cuscuz")));
-  if (naoGosta("torrada") && alt("torrada")) t = t.replace(/torrada/gi, m => cap(m, alt("torrada")));
-  if (naoGosta("pao") && alt("pao")){
-    t = t.replace(/lanche natural de /gi, m => cap(m, alt("pao")+" com "));
-    t = t.replace(/lanche natural/gi, m => cap(m, alt("pao")+" com recheio"));
-    t = t.replace(/pão de forma/gi, m => cap(m, alt("pao")));
-    t = t.replace(/\b[Pp]ão(?=[\s,]|$)/g, m => cap(m, alt("pao")));
-  }
-  return t;
-}
 // REFEIÇÕES POR DIA: o método foi pensado para 6, mas a pessoa pode escolher 5, 4 ou 3.
 // ATIVAS diz quais refeições aparecem (pela posição em MEALS: 0 café, 1 lanche da manhã,
 // 2 almoço, 3 lanche da tarde, 4 janta, 5 ceia).
@@ -114,9 +73,8 @@ const ATIVAS = {6:[0,1,2,3,4,5], 5:[0,1,2,3,4], 4:[0,2,3,4], 3:[0,2,4]};
 const nRef = () => G.refeicoes || 6;
 const ativas = () => ATIVAS[nRef()];
 const vitNoCafe = () => nRef() <= 4;
-// texto(): o texto de uma refeição já com os gostos e, no café, com a vitamina quando ela mudou de lugar.
+// texto(): o texto de uma refeição e, no café, a vitamina quando ela mudou de lugar.
 function texto(t, i, curto){
-  t = ajusta(t);
   if (i === 0 && vitNoCafe()) t += curto ? " + vitamina" : ", e vitamina de frutas";
   return t;
 }
@@ -126,32 +84,25 @@ function usos(d, i){
   if (i === 0 && vitNoCafe()) for (const k in WEEK[d].m[1][1]) u[k] = (u[k]||0) + WEEK[d].m[1][1][k];
   return u;
 }
-
-// trocas(): conta quantas refeições da semana mudaram com os gostos.
-function trocas(){
-  let n = 0; WEEK.forEach(w => ativas().forEach(i => { if (ajusta(w.m[i][0]) !== w.m[i][0]) n++; })); return n;
-}
-// shopList(): a lista de compras sem os itens de que a pessoa não gosta.
-function shopList(){
-  const fora = GOSTOS.filter(o => o.compra && naoGosta(o.id)).map(o => o.compra);
-  const sai = i => fora.some(f => i.startsWith(f+":"));
-  return SHOP.map(sec => ({sec: sec.sec, g: sec.g.map(g => ({s: g.s, i: g.i.filter(i => !sai(i))})).filter(g => g.i.length)}))
-             .filter(sec => sec.g.length);
-}
+// shopList(): a lista de compras da semana.
+// Na Semana 1, ela sai das escolhas da pessoa (monta.js); nas outras, do arquivo de dados.
+const shopList = () => SHOP;
 
 /* ============ CÁLCULOS ============ */
 // Listas "achatadas": juntam todos os itens num array só, para contar fácil.
 // flatMap percorre cada seção e devolve os itens de dentro dela numa lista única.
 const allShop = () => shopList().flatMap(s => s.g.flatMap(g => g.i));
-const allArm = ARM.flatMap(s => s.items);
-const allCoz = COZ.flatMap(b => b.items);
+// allArm() e allCoz() são funções (e não listas fixas) porque a semana pode ser montada de novo
+// quando a pessoa muda as respostas.
+const allArm = () => ARM.flatMap(s => s.items);
+const allCoz = () => COZ.flatMap(b => b.items);
 // pct(): calcula a porcentagem (a de b). Usada nas barras de progresso.
 const pct = (a,b) => b ? Math.round(a/b*100) : 0;
 // Contadores: quantos itens já foram marcados em cada etapa.
 // filter guarda só os marcados, e length conta quantos sobraram.
 const shopDone = () => allShop().filter(i => S.shop[i]).length;
-const armDone = () => allArm.filter(i => S.done[i.id]).length;
-const cozDone = () => allCoz.filter(i => S.done[i.id]).length;
+const armDone = () => allArm().filter(i => S.done[i.id]).length;
+const cozDone = () => allCoz().filter(i => S.done[i.id]).length;
 // mealKey(): cria a chave de uma refeição, juntando dia e refeição. Ex.: "1-2" = terça, almoço.
 const mealKey = (d,m) => d+"-"+m;
 // mealCount(): conta quantas refeições estão com um certo estado (comi, troq ou pulei).
@@ -161,13 +112,13 @@ function mealCount(st){ let c=0; WEEK.forEach((w,d) => ativas().forEach(i => { i
 const totalRef = () => 7 * ativas().length;
 
 // stock(): calcula o freezer.
-// 1) Começa com tudo em zero.
+// 1) Começa com o que já estava no freezer.
 // 2) Soma o adds de cada passo marcado como feito (guardar e cozinha).
 // 3) Subtrai o que cada refeição marcada como "comi" usa.
 function stock(){
-  const s = {}; Object.keys(FREEZER).forEach(k => s[k] = inicial()[k] || 0);
-  [...allArm, ...allCoz].forEach(it => { if (S.done[it.id] && it.adds) for (const k in it.adds) s[k]+=it.adds[k]; });
-  WEEK.forEach((w,d) => ativas().forEach(i => { if (S.meals[mealKey(d,i)]==="comi") { const u = usos(d,i); for (const k in u) s[k]-=u[k]; } }));
+  const s = {}; Object.keys(FZ()).forEach(k => s[k] = inicial()[k] || 0);
+  [...allArm(), ...allCoz()].forEach(it => { if (S.done[it.id] && it.adds) for (const k in it.adds) s[k] = (s[k]||0) + it.adds[k]; });
+  WEEK.forEach((w,d) => ativas().forEach(i => { if (S.meals[mealKey(d,i)]==="comi") { const u = usos(d,i); for (const k in u) s[k] = (s[k]||0) - u[k]; } }));
   return s;
 }
 // inicial(): o que já estava no freezer no começo da semana.
@@ -192,23 +143,42 @@ const $app = document.getElementById("app");
 // para um texto não ser lido como HTML por engano.
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
+// TELAS_MAPA: liga o nome de cada aba à função que desenha a tela.
+// gostos, potesTela, refeicoes e escolha ficam no escolha.js.
+const TELAS_MAPA = {inicio, gostos, potes: potesTela, refeicoes, escolha, aprovar, preparar, cardapio, estoque, relatorio};
 // render(): desenha a aba atual.
-// Primeiro acende o botão certo na barra de baixo; depois chama a função da aba (inicio, preparar...).
+// Primeiro acende o botão certo na barra de baixo; depois chama a função da aba.
+// Se a aba salva não existe mais (ex.: a antiga "naogosto"), volta para o Início.
 function render(){
+  if (!TELAS_MAPA[S.tab]) S.tab = "inicio";
+  // Semana 1: monta a semana com as respostas (só quando elas mudaram).
+  // Se a semana mudou, as marcações antigas (compra, guardar, cozinha e cardápio) não valem mais e são zeradas.
+  if (typeof montaSemana === "function" && montaSemana() && S.assin !== MONTADA.a){
+    const tinha = Object.keys(S.shop).length || Object.keys(S.done).length || Object.keys(S.meals).length;
+    S.shop = {}; S.done = {}; S.meals = {}; S.aprovado = false; S.assin = MONTADA.a; save();
+    if (tinha) setTimeout(() => toast("Semana nova: as marcações foram zeradas"), 50);
+  }
+  // Se a semana não fechou com os alimentos marcados, as telas do cardápio e do preparo mostram o aviso.
+  if (typeof MONTADA !== "undefined" && MONTADA && MONTADA.erro && ["aprovar", "preparar", "cardapio"].includes(S.tab)){
+    document.querySelectorAll("nav.bot button").forEach(b => b.classList.toggle("on", b.dataset.tab===S.tab));
+    return naoFechou();
+  }
   document.querySelectorAll("nav.bot button").forEach(b => b.classList.toggle("on", b.dataset.tab===S.tab));
-  ({inicio, gostos, naogosto, aprovar, preparar, cardapio, estoque, relatorio})[S.tab]();
+  TELAS_MAPA[S.tab]();
 }
 
 // TELA INÍCIO: o texto de boas-vindas, as etapas com barra de progresso e as palavras do método.
 function inicio(){
   const tot = totalRef(), comi = mealCount("comi");
+  // Resumo das respostas, mostrado na primeira etapa depois que as perguntas foram respondidas.
+  const resumo = G._visto ? "Feito · "+fmtPorcao(porcoesCasa())+" · "+nRef()+" refeições por dia · "+nomesEscolhidos().length+" alimentos" : "Comece por aqui";
   // Cada etapa é [ícone, título, texto, porcentagem, aba de destino, sub-aba].
   const steps = [
-    ["🧭","Entender o cardápio e responder as perguntas",G._visto ? "Feito · "+nRef()+" refeições por dia"+(trocas() ? " · "+trocas()+" ajustes" : "") : "Comece por aqui",G._visto?100:0,"gostos",null],
+    ["🧭","Responder as perguntas e escolher o que comer",resumo,G._visto?100:0,"gostos",null],
     ["👍","Aprovar o cardápio",S.aprovado ? "Aprovado" : "Veja a semana antes da compra",S.aprovado?100:0,"aprovar",null],
     ["🛒","Fazer a compra",`${shopDone()} de ${allShop().length} itens`,pct(shopDone(),allShop().length),"preparar","compra"],
-    ["🧊","Guardar a compra",`${armDone()} de ${allArm.length} etapas`,pct(armDone(),allArm.length),"preparar","guardar"],
-    ["🍳","Cozinhar a semana",`${cozDone()} de ${allCoz.length} preparos · ${SEMANA.tempoCozinha}`,pct(cozDone(),allCoz.length),"preparar","cozinha"],
+    ["🧊","Guardar a compra",`${armDone()} de ${allArm().length} etapas`,pct(armDone(),allArm().length),"preparar","guardar"],
+    ["🍳","Cozinhar a semana",`${cozDone()} de ${allCoz().length} preparos · ${SEMANA.tempoCozinha}`,pct(cozDone(),allCoz().length),"preparar","cozinha"],
     ["🍽️","Seguir o cardápio",`${comi} de ${tot} refeições`,pct(comi,tot),"cardapio",null],
     ["📝","Mandar o relatório","No fim da semana",S.rep.sent?100:0,"relatorio",null]
   ];
@@ -228,7 +198,7 @@ function inicio(){
       </div>`).join("")}
     <h2>Palavras do método</h2>
     <div class="card"><dl class="glos" style="margin:0">
-      <dt>Pote de porção</dt><dd>Pote do freezer com uma refeição só (exemplo: um pote de arroz).</dd>
+      <dt>Pote de porção</dt><dd>Pote do freezer com uma refeição para todos que comem nela (exemplo: um pote de arroz).</dd>
       <dt>Pote da praça</dt><dd>Pote médio da geladeira, com o que você usa todo dia para montar o prato: folhas, cenoura ralada, queijo, presunto.</dd>
       <dt>Limpar a praça</dt><dd>Limpar a bancada, a pia e os utensílios antes de mexer nos alimentos.</dd>
       <dt>Branquear</dt><dd>Ferver o legume rapidinho e passar na água com gelo. Assim ele congela sem amolecer.</dd>
@@ -238,96 +208,9 @@ function inicio(){
     <div style="margin-top:26px;text-align:center"><button class="btn ghost small" id="reset">Recomeçar do zero</button></div>
     <p class="muted" style="text-align:center;margin-top:8px">O que você marca fica salvo neste aparelho, neste navegador.</p>`;
   // Liga os cliques: tocar num cartão muda a aba (e a sub-aba) e redesenha a tela.
-  $app.querySelectorAll("[data-go]").forEach(el => el.onclick = () => { S.tab = el.dataset.go; if (el.dataset.sub) S.prep = el.dataset.sub; go(); });
-  // Botão Recomeçar: abre a janelinha de confirmação e, se a pessoa aceitar, zera o estado.
-  document.getElementById("reset").onclick = () => ask("Apagar tudo?","Todas as marcações, o estoque e o relatório voltam ao começo.", () => { S = blank(); go(); toast("Tudo apagado"); });
-}
-
-// TELA CARDÁPIO E GOSTOS: explica como o cardápio é montado e pergunta do que a pessoa não gosta.
-// Abre pelo primeiro passo do Início (não tem botão na barra de baixo).
-function gostos(){
-  $app.innerHTML = `<h1>Como o seu cardápio é montado</h1>
-
-    <div class="card" style="background:var(--tomato-l);border-color:#F2CDB9">
-      <b>⚠️ Método em teste</b>
-      <p>Este método ainda está sendo testado e <b>não serve para pessoas com restrição alimentar</b>: alergia, intolerância (como à lactose ou ao glúten), doença celíaca, diabetes ou dieta vegetariana. Nesses casos, procure uma nutricionista.</p>
-    </div>
-
-    <h2>🕒 Seis refeições, de 3 em 3 horas</h2>
-    <p>O método foi pensado para <b>6 refeições por dia</b>: café da manhã, lanche da manhã, almoço, lanche da tarde, janta e ceia. Comer de 3 em 3 horas evita chegar com muita fome na refeição seguinte e ajuda a comer a proteína do dia.</p>
-
-    <h2>🧩 Cada prato é montado com peças</h2>
-    <p>Todo prato junta uma peça que dá <b>energia</b> (arroz, pão, tapioca, macarrão), uma de <b>proteína</b> (frango, carne, ovo, queijo) e, no almoço e na janta, <b>legumes ou salada</b>. Como as peças têm o mesmo papel, uma pode entrar no lugar da outra sem desequilibrar o prato.</p>
-
-    <h2>❄️ Pratos prontos e pratos na hora</h2>
-    <div class="grade2">
-      <div class="card"><b>Prontos no freezer</b><p class="muted">Arroz, feijão, frango, carne moída, hambúrguer, polenta e torta. É só esquentar.</p></div>
-      <div class="card"><b>Feitos na hora</b><p class="muted">Tapioca, cuscuz, torrada, lanche natural, ovos e mingau, com o recheio dos potes da geladeira. Levam poucos minutos.</p></div>
-    </div>
-
-    <h2>🔄 Peças que se trocam</h2>
-    <ul class="lista">
-      <li><b>Bases:</b> pão de forma, torrada, tapioca e cuscuz.</li>
-      <li><b>Recheios:</b> muçarela, presunto ou peito de peru, frango desfiado, ovo e atum.</li>
-      <li><b>Base do almoço:</b> arroz e feijão, macarrão ou polenta.</li>
-      <li><b>Frutas:</b> banana, mamão, maçã e laranja.</li>
-    </ul>
-
-    <h2>🎲 Regras para não enjoar</h2>
-    <ul class="lista">
-      <li>Nenhum prato aparece mais de 3 vezes na semana na mesma refeição.</li>
-      <li>O mesmo prato não se repete na mesma refeição em dias seguidos.</li>
-      <li>O que estraga rápido (cenoura ralada, mamão picado) vem nos primeiros dias.</li>
-      <li>De uma semana para a outra, os almoços e as jantas mudam.</li>
-    </ul>
-
-    <div class="card" style="background:var(--green-l);border-color:#BFD9C7;margin-top:22px">
-      <b>📝 Para montar o seu cardápio, responda duas perguntas rápidas.</b>
-    </div>
-    <span class="pill s">Pergunta 1 de 2</span>
-    <h2 style="margin-top:8px">🍽️ Quantas refeições por dia você quer fazer?</h2>
-    <p class="muted">Se 6 for demais para a sua rotina, dá para fazer menos. A página junta ou tira refeições para caber no seu dia.</p>
-    <div class="card" style="padding:4px 12px">
-      ${[[6,"6 refeições (recomendado)","Café, lanche da manhã, almoço, lanche da tarde, janta e ceia."],
-         [5,"5 refeições","Sem a ceia."],
-         [4,"4 refeições","Sem a ceia e sem o lanche da manhã. A vitamina passa para o café."],
-         [3,"3 refeições","Só café, almoço e janta. A vitamina passa para o café, e a torta do lanche fica guardada no freezer para as próximas semanas."]]
-        .map(([n,t,dsc]) => `<div class="chk ${nRef()===n?"on":""}" data-ref="${n}"><div class="box" style="border-radius:50%">${nRef()===n?"✓":""}</div><div class="lbl" style="text-decoration:none;color:var(--ink)"><b>${t}</b><div class="muted" style="font-size:.85rem">${dsc}</div></div></div>`).join("")}
-    </div>
-    ${nRef() < 6 ? `<p class="muted" style="font-size:.88rem">Com menos refeições, fica mais difícil comer toda a proteína do dia. Nesta versão de teste, a lista de compras não muda: o que sobrar fica na despensa ou no freezer para a próxima semana.</p>` : ""}
-
-    <button class="btn" id="prox" style="width:100%;margin-top:8px">Próxima pergunta ›</button>`;
-  // Escolher quantas refeições por dia: salva e redesenha a tela.
-  $app.querySelectorAll("[data-ref]").forEach(el => el.onclick = () => {
-    G.refeicoes = +el.dataset.ref; saveGostos(); const y = window.scrollY; gostos(); window.scrollTo(0,y);
-  });
-  // Botão Próxima pergunta: abre a tela "Do que você não gosta?".
-  document.getElementById("prox").onclick = () => { S.tab = "naogosto"; go(); window.scrollTo(0,0); };
-}
-
-// TELA NÃO GOSTO: a pergunta 2, com a lista do que a pessoa não quer no cardápio.
-// No fim, o botão gera o cardápio e abre a tela de aprovar.
-function naogosto(){
-  const grupos = [...new Set(GOSTOS.map(o => o.g))];
-  const nenhumaBase = BASE_ORDEM.every(b => naoGosta(b));
-  $app.innerHTML = `<span class="pill s">Pergunta 2 de 2</span>
-    <h1 style="margin-top:8px">👎 Do que você não gosta?</h1>
-    <p class="muted">Marque o que não quer no cardápio. A página troca por outra peça do mesmo papel e tira o item da lista de compras. Se gosta de tudo, é só seguir.</p>
-    ${grupos.map(gr => `<div class="sub-t">${gr}</div><div class="card" style="padding:4px 12px">
-      ${GOSTOS.filter(o => o.g===gr).map(o => `<div class="chk ${naoGosta(o.id)?"on":""}" data-g="${o.id}"><div class="box">${naoGosta(o.id)?"✓":""}</div><div class="lbl">${o.n}</div></div>`).join("")}
-    </div>`).join("")}
-    ${nenhumaBase ? `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8">Deixe pelo menos uma base sem marcar, para a página ter o que colocar no lugar.</div>` : ""}
-    <div class="card" style="background:var(--green-l);border-color:#BFD9C7">${trocas() ? `<b>✓ ${trocas()} refeições ajustadas</b> aos seus gostos.` : "Nenhuma troca: o cardápio fica como foi planejado."}</div>
-    <p class="muted" style="font-size:.88rem"><b>O que não muda nesta versão de teste:</b> os pratos do freezer, as frutas e as saladas, porque eles mudam a compra e a cozinha da semana inteira.</p>
-    <button class="btn" id="pronto" style="width:100%;margin-top:8px">Gerar meu cardápio ›</button>
-    <button class="btn ghost" id="volta" style="width:100%;margin-top:10px">‹ Voltar para a pergunta 1</button>`;
-  // Marcar ou desmarcar um "não gosto": salva, e a tela se redesenha com o novo número de trocas.
-  $app.querySelectorAll("[data-g]").forEach(el => el.onclick = () => {
-    G[el.dataset.g] = !G[el.dataset.g]; saveGostos(); const y = window.scrollY; naogosto(); window.scrollTo(0,y);
-  });
-  // Gerar: marca as perguntas como respondidas e abre o cardápio para aprovar.
-  document.getElementById("pronto").onclick = () => { G._visto = true; saveGostos(); S.tab = "aprovar"; go(); window.scrollTo(0,0); };
-  document.getElementById("volta").onclick = () => { S.tab = "gostos"; go(); window.scrollTo(0,0); };
+  $app.querySelectorAll("[data-go]").forEach(el => el.onclick = () => { S.tab = el.dataset.go; if (el.dataset.sub) S.prep = el.dataset.sub; go(); window.scrollTo(0,0); });
+  // Botão Recomeçar: abre a janelinha de confirmação e, se a pessoa aceitar, zera o estado da semana.
+  document.getElementById("reset").onclick = () => ask("Apagar tudo?","Todas as marcações, o estoque e o relatório voltam ao começo. As suas respostas das perguntas continuam salvas.", () => { S = blank(); go(); toast("Tudo apagado"); });
 }
 
 // TELA PREPARAR: tem 3 sub-abas (Compra, Guardar, Cozinha).
@@ -336,7 +219,7 @@ function preparar(){
   const tabs = [["compra","🛒 Compra"],["guardar","🧊 Guardar"],["cozinha","🍳 Cozinha"]];
   let html = `<h1>Preparar a semana</h1>
     <div class="seg">${tabs.map(t => `<button data-p="${t[0]}" class="${S.prep===t[0]?"on":""}">${t[1]}</button>`).join("")}</div>`;
-  // Sub-aba COMPRA: percorre SHOP e cria uma linha marcável para cada item.
+  // Sub-aba COMPRA: percorre a lista e cria uma linha marcável para cada item.
   if (S.prep==="compra"){
     html += `<p class="muted">Marque cada item quando ele entrar no carrinho. A lista segue o caminho do mercado: os gelados ficam por último.</p>
       <div class="bar" style="margin:10px 0 4px"><i style="width:${pct(shopDone(),allShop().length)}%"></i></div>
@@ -358,7 +241,7 @@ function preparar(){
   // Sub-aba GUARDAR: percorre os 6 passos de ARM e cria um cartão para cada item.
   } else if (S.prep==="guardar"){
     html += `<p class="muted">Seis passos, nesta ordem. Toque num item para ver o que fazer e marque o círculo quando terminar.</p>
-      <div class="bar" style="margin:10px 0 4px"><i style="width:${pct(armDone(),allArm.length)}%"></i></div>`;
+      <div class="bar" style="margin:10px 0 4px"><i style="width:${pct(armDone(),allArm().length)}%"></i></div>`;
     ARM.forEach((st,ix) => {
       const tudo = st.items.every(it => S.done[it.id]);
       html += `<div class="blk grp"><h3>${ix+1}. ${st.icon} ${st.t}</h3>${allBtn("arm", ix, tudo)}</div>`;
@@ -371,7 +254,7 @@ function preparar(){
   // Sub-aba COZINHA: percorre os 3 blocos de COZ.
   } else {
     html += `<p class="muted">A cozinha é dividida em três blocos, no total ${SEMANA.tempoCozinha}. Os tempos servem para você se organizar, não são uma prova.</p>
-      <div class="bar" style="margin:10px 0 4px"><i style="width:${pct(cozDone(),allCoz.length)}%"></i></div>`;
+      <div class="bar" style="margin:10px 0 4px"><i style="width:${pct(cozDone(),allCoz().length)}%"></i></div>`;
     COZ.forEach((b,ix) => {
       const tudo = b.items.every(it => S.done[it.id]);
       html += `<div class="blk"><div class="grp"><h3>${b.icon} ${b.t}</h3>${allBtn("coz", ix, tudo)}</div><div class="when">${b.when}</div></div>`;
@@ -383,7 +266,7 @@ function preparar(){
       <div class="body" style="padding-left:14px">
         <p class="lead muted">Depois de guardar a compra e cozinhar, sua casa deve ficar assim. Os pesos são aproximados.</p>
         ${ESPERADO.map(l => `<div class="loc"><b>${l.icon} ${l.local}</b><ul>${l.itens.map(i => `<li>${i}</li>`).join("")}</ul></div>`).join("")}
-        <div class="adds"><b>Total:</b> ${ESPERADO_TOTAL}</div>
+        <div class="adds"><b>Total:</b> ${SEMANA.esperadoTotal || ESPERADO_TOTAL}</div>
       </div></details>`;
     html += `<button class="btn" data-go2="cardapio" style="width:100%;margin-top:10px">Pronto! Ver o cardápio ›</button>`;
   }
@@ -410,9 +293,6 @@ function preparar(){
   const g2 = $app.querySelector("[data-go2]"); if (g2) g2.onclick = () => { S.tab="cardapio"; go(); window.scrollTo(0,0); };
 }
 
-// itemCard(): monta o cartão de um passo (usado em Guardar e em Cozinha).
-// Usa <details>, que abre e fecha sozinho ao tocar no título.
-// Mostra o texto, os destinos, os ingredientes, o preparo e o aviso do que entra no estoque.
 // allBtn(): cria o botão "Marcar todos" de um grupo.
 // tipo diz de onde é o grupo (shop = compra, arm = guardar, coz = cozinha) e k diz qual grupo.
 // Se o grupo já estiver todo marcado (tudo = true), o botão vira "Desmarcar todos".
@@ -420,6 +300,9 @@ function allBtn(tipo, k, tudo){
   return `<button class="all" data-all="${tipo}:${k}" data-tudo="${tudo?1:0}">${tudo ? "Desmarcar todos" : "✓ Marcar todos"}</button>`;
 }
 
+// itemCard(): monta o cartão de um passo (usado em Guardar e em Cozinha).
+// Usa <details>, que abre e fecha sozinho ao tocar no título.
+// Mostra o texto, os destinos, os ingredientes, o preparo e o aviso do que entra no estoque.
 function itemCard(it){
   const done = !!S.done[it.id];
   let body = `<p class="lead">${esc(it.text)}</p>`;
@@ -428,7 +311,7 @@ function itemCard(it){
   if (it.prep) body += `<div class="dest"><b>Preparo</b>${esc(it.prep)}</div>`;
   // Números positivos em adds entram no freezer; negativos saem (ex.: o molho que vira bolonhesa).
   if (it.adds){
-    const desc = ([k,v]) => Math.abs(v)+" "+FREEZER[k].u+" de "+FREEZER[k].n.toLowerCase();
+    const desc = ([k,v]) => fmt(Math.abs(v))+" "+FZ()[k].u+" de "+FZ()[k].n.toLowerCase();
     const entra = Object.entries(it.adds).filter(([k,v]) => v > 0).map(desc);
     const sai = Object.entries(it.adds).filter(([k,v]) => v < 0).map(desc);
     body += `<div class="adds">Ao marcar como feito, ${entra.length ? "entra no estoque: "+entra.join(", ") : ""}${entra.length && sai.length ? "; " : ""}${sai.length ? "sai do estoque: "+sai.join(", ") : ""}.</div>`;
@@ -467,12 +350,16 @@ function tabela(d){
     <p class="muted" style="font-size:.8rem">${ativas().map(j => { const [ic, nm] = MEALS[j].split("|"); return ic+" "+nm.toLowerCase(); }).join(" · ")}. Arraste a tabela para o lado.</p>`;
 }
 
-// TELA APROVAR: mostra o cardápio da semana, já com os gostos, para a pessoa aprovar antes da compra.
+// TELA APROVAR: mostra o cardápio da semana para a pessoa aprovar antes da compra.
 // É o mesmo passo do manual: a lista de compras só vem depois que o cardápio é confirmado.
+// Nesta entrega, o cardápio ainda é o fixo do arquivo de dados; o aviso deixa isso claro.
 function aprovar(){
   $app.innerHTML = `<span class="pill">Semana ${SEMANA.num}</span>
     <h1>Seu cardápio da semana</h1>
-    <p>Este é o cardápio montado para você, com <b>${nRef()} refeições por dia</b>${trocas() ? ` e <b>${trocas()} refeições ajustadas</b> aos seus gostos` : ""}. Dê uma olhada: se estiver do seu gosto, aprove e siga para a lista de compras.</p>
+    ${typeof MONTADA !== "undefined" && MONTADA
+      ? `<div class="card" style="background:var(--green-l);border-color:#BFD9C7"><b>🧩 Montado com o que você escolheu</b><p>Cardápio para <b>${fmtPorcao(porcoesCasa())}</b>, só com os alimentos que você marcou. A lista de compras, o guardar e a cozinha saem dele.</p></div>`
+      : `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8"><b>Modelo da semana</b><p>Este é o cardápio de exemplo. Responda as perguntas para montar o seu.</p></div>`}
+    <p>Cardápio com <b>${nRef()} refeições por dia</b>. Dê uma olhada: se estiver do seu gosto, aprove e siga para a lista de compras.</p>
     ${tabela(null)}
     <p class="muted">A lista de compras é feita a partir deste cardápio. Depois, na aba Cardápio, você vê cada dia completo, com as bebidas.</p>
     <button class="btn" id="aprova" style="width:100%;margin-top:10px">👍 Aprovar e ir para a compra</button>
@@ -485,7 +372,20 @@ function aprovar(){
   document.getElementById("muda").onclick = () => { S.tab = "gostos"; go(); window.scrollTo(0,0); };
 }
 
-// TELA CARDÁPIO: os botões dos dias, as 6 refeições do dia escolhido e os botões Comi/Troquei/Pulei.
+// naoFechou(): a tela de aviso quando a semana não fecha com os alimentos marcados (padrão, seção 7.8).
+// A página não mostra o cardápio pela metade.
+function naoFechou(){
+  $app.innerHTML = `<h1>Falta pouco para montar a semana</h1>
+    <div class="card" style="background:var(--tomato-l);border-color:#F2CDB9">
+      <b>Marque mais alguns alimentos para variar o cardápio.</b>
+      <p>${esc(MONTADA.erro)} Com os alimentos e os potes de agora, a semana repetiria pratos demais.</p>
+      <p class="muted">Dica: mais potes de porção também ajudam, porque deixam mais pratos prontos no freezer.</p>
+    </div>
+    <button class="btn" id="volta" style="width:100%;margin-top:10px">‹ Voltar para a escolha</button>`;
+  document.getElementById("volta").onclick = () => { S.tab = "escolha"; go(); window.scrollTo(0,0); };
+}
+
+// TELA CARDÁPIO: os botões dos dias, as refeições do dia escolhido e os botões Comi/Troquei/Pulei.
 function cardapio(){
   // Se nenhum dia foi escolhido, abre no primeiro dia que ainda tem refeição sem marcar.
   if (S.day===null){
@@ -494,14 +394,11 @@ function cardapio(){
   }
   const d = S.day, w = WEEK[d];
   // Se a cozinha ainda não foi toda marcada, mostra um aviso.
-  const notCooked = cozDone() < allCoz.length;
+  const notCooked = cozDone() < allCoz().length;
   let html = `<h1>Cardápio da semana</h1>
-    ${trocas() ? `<p class="muted">✓ Ajustado aos seus gostos: ${trocas()} refeições trocadas. <a href="#gostos">Mudar</a></p>` : ""}
     ${notCooked ? `<div class="card" style="background:var(--sun-l);border-color:#F3DFA8">A cozinha ainda não foi marcada como feita. Você pode olhar o cardápio, mas o estoque só aparece depois da cozinha.</div>` : ""}`;
   // TABELA DA SEMANA: os dias nas colunas (horizontal) e as refeições nas linhas.
-  // A primeira coluna (ícones) fica parada enquanto a tabela rola para o lado (position: sticky).
   // Tocar no nome de um dia abre esse dia logo abaixo, no dia a dia.
-  // Cada célula ganha a cor do que foi marcado: verde = comi, amarelo = troquei, cinza = pulei.
   html += tabela(d);
   // DIA A DIA: os botões dos dias e as refeições completas do dia escolhido.
   html += `<h2>Dia a dia</h2>
@@ -545,12 +442,12 @@ function cardapio(){
 // e a lista do que entra na próxima compra.
 function estoque(){
   const s = stock();
-  const keys = Object.keys(FREEZER);
+  const keys = Object.keys(FZ());
   const any = keys.some(k => s[k] > 0);
   let html = `<h1>Estoque</h1>
     <p class="muted">O freezer se atualiza sozinho: entra o que você guardou e cozinhou, sai o que marcou como comido.${SEMANA.num > 1 ? " Já inclui o que sobrou da semana passada." : ""}</p>
     <h2>❄️ Freezer</h2><div class="card" style="padding:4px 14px">
-    ${any ? keys.map(k => `<div class="stk"><div class="grow">${FREEZER[k].n}<div class="muted" style="font-size:.8rem">${FREEZER[k].u}</div></div><div class="num ${s[k]<=0?"zero":""}">${fmt(s[k])}</div></div>`).join("")
+    ${any ? keys.map(k => `<div class="stk"><div class="grow">${FZ()[k].n}<div class="muted" style="font-size:.8rem">${FZ()[k].u}</div></div><div class="num ${s[k]<=0?"zero":""}">${fmt(s[k])}</div></div>`).join("")
       : `<p class="muted" style="padding:10px 0">Vazio por enquanto. Ele enche quando você marcar os passos de Guardar e Cozinha.</p>`}
     </div>
     <h2>🗄️ Geladeira e despensa</h2>
@@ -581,7 +478,7 @@ function relatorio(){
   const opt = (field, list) => `<div class="opts">${list.map(o => `<button data-f="${field}" data-v="${esc(o)}" class="${r[field]===o?"on":""}">${o}</button>`).join("")}</div>`;
   // linha(): uma linha do resumo, com o nome à esquerda e o valor à direita.
   const linha = (nome, valor) => `<div class="stk"><div class="grow">${nome}</div><b>${valor}</b></div>`;
-  const sobras = Object.keys(FREEZER).filter(k => s[k] > 0).map(k => fmt(s[k])+"x "+FREEZER[k].n.toLowerCase());
+  const sobras = Object.keys(FZ()).filter(k => s[k] > 0).map(k => fmt(s[k])+"x "+FZ()[k].n.toLowerCase());
   const pouco = BASE.filter(b => (S.base[b]||"tem")!=="tem").map(b => b+" ("+S.base[b]+")");
   $app.innerHTML = `<h1>Relatório da semana</h1>
     <p class="muted">No fim da semana, confira o seu relatório, responda o feedback e envie para quem te mandou esta página.</p>
@@ -590,8 +487,8 @@ function relatorio(){
     <p class="muted">Este resumo é montado sozinho, com o que você marcou na página.</p>
     <div class="card" style="padding:4px 14px">
       ${linha("🛒 Compra", shopDone()+" de "+allShop().length+" itens")}
-      ${linha("🧊 Guardar", armDone()+" de "+allArm.length+" etapas")}
-      ${linha("🍳 Cozinha", cozDone()+" de "+allCoz.length+" preparos")}
+      ${linha("🧊 Guardar", armDone()+" de "+allArm().length+" etapas")}
+      ${linha("🍳 Cozinha", cozDone()+" de "+allCoz().length+" preparos")}
       ${linha("✓ Refeições comidas", mealCount("comi")+" de "+totalRef())}
       ${linha("↔ Trocadas", mealCount("troq"))}
       ${linha("– Puladas", mealCount("pulei"))}
@@ -603,6 +500,9 @@ function relatorio(){
     <label class="f">Quanto tempo levou para guardar a compra?</label><input class="f" data-t="tguardar" placeholder="Ex.: 1h30" value="${esc(r.tguardar||"")}">
     <label class="f">Quanto tempo levou a cozinha?</label><input class="f" data-t="tcozinha" placeholder="Ex.: 3h" value="${esc(r.tcozinha||"")}">
     <label class="f">Como foi a rotina?</label>${opt("rotina",["Segui quase tudo","Metade","Pouco"])}
+    <label class="f">A porção ${criancas() ? "dos adultos " : ""}foi pouca, certa ou muita?</label>${opt("porcaoAdultos",PORCAO_OPCOES)}
+    ${criancas() ? `<label class="f">E a porção das crianças?</label>${opt("porcaoCriancas",PORCAO_OPCOES)}` : ""}
+    <p class="muted" style="font-size:.85rem">Na próxima semana, só o carboidrato (arroz, massa, polenta, pão) muda: ¼ a mais se foi pouca, ¼ a menos se foi muita. A proteína continua igual.</p>
 
     <h2>2. Feedback do método</h2>
     <p class="muted">Conte como foi seguir o método. Não existe resposta errada: é assim que ele melhora.</p>
@@ -633,7 +533,12 @@ function relatorio(){
   upd();
   // Cada campo salva o que foi digitado (oninput dispara a cada letra) e atualiza o relatório.
   $app.querySelectorAll("[data-t]").forEach(el => el.oninput = () => { r[el.dataset.t] = el.value; save(); upd(); });
-  $app.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { r[b.dataset.f] = r[b.dataset.f]===b.dataset.v ? "" : b.dataset.v; save(); const y=window.scrollY; relatorio(); window.scrollTo(0,y); });
+  $app.querySelectorAll("[data-f]").forEach(b => b.onclick = () => {
+    r[b.dataset.f] = r[b.dataset.f]===b.dataset.v ? "" : b.dataset.v; save();
+    // As respostas da porção também vão para a gaveta das respostas (G), para valer na próxima semana.
+    if (b.dataset.f.startsWith("porcao")) guardaAjuste();
+    const y=window.scrollY; relatorio(); window.scrollTo(0,y);
+  });
   document.getElementById("copy").onclick = () => copyText(reportText());
   document.getElementById("mail").onclick = () => { S.rep.sent = true; save(); };
   // Botão da próxima semana: guarda as sobras do freezer (para a semana seguinte começar com elas)
@@ -645,12 +550,28 @@ function relatorio(){
             location.href = SEMANA.proxima; }, "Começar");
 }
 
+// AJUSTE DA PORÇÃO (padrão do banco de dados, seção 7.7.1; manual, seção 0.9):
+// no fim da semana, a pessoa diz se a porção foi pouca, certa ou muita, em separado para adultos e crianças.
+// A resposta vira um número que multiplica o carboidrato da semana seguinte:
+// pouca = 1,25 (¼ a mais), certa = 1, muita = 0,75 (¼ a menos). A proteína não muda.
+const PORCAO_OPCOES = ["Pouca","Certa","Muita"];
+const PORCAO_FATOR = {"Pouca": 1.25, "Certa": 1, "Muita": 0.75};
+// guardaAjuste(): salva os números em G.ajuste (G vale para todas as semanas).
+// Por enquanto a página só guarda o ajuste; ele entra na conta quando a semana seguinte for montada sozinha.
+function guardaAjuste(){
+  G.ajuste = {
+    adultos: PORCAO_FATOR[S.rep.porcaoAdultos] || 1,
+    criancas: PORCAO_FATOR[S.rep.porcaoCriancas] || 1
+  };
+  saveGostos();
+}
+
 // reportText(): monta o texto para copiar, linha por linha, num array L.
 // Tem as mesmas duas partes da tela: primeiro o relatório, depois o feedback.
 // No fim, join("\n") junta tudo com quebras de linha.
 function reportText(){
   const r = S.rep, s = stock();
-  const sobras = Object.keys(FREEZER).filter(k => s[k] > 0).map(k => fmt(s[k])+"x "+FREEZER[k].n.toLowerCase());
+  const sobras = Object.keys(FZ()).filter(k => s[k] > 0).map(k => fmt(s[k])+"x "+FZ()[k].n.toLowerCase());
   const pouco = BASE.filter(b => (S.base[b]||"tem")!=="tem").map(b => b+" ("+S.base[b]+")");
   const L = [];
   L.push("📝 Método Modular · Semana "+SEMANA.num);
@@ -659,8 +580,8 @@ function reportText(){
   // Parte 1: o relatório do usuário.
   L.push("— 1. RELATÓRIO —");
   L.push("Compra: "+shopDone()+" de "+allShop().length+" itens");
-  L.push("Guardar: "+armDone()+" de "+allArm.length+" etapas");
-  L.push("Cozinha: "+cozDone()+" de "+allCoz.length+" preparos");
+  L.push("Guardar: "+armDone()+" de "+allArm().length+" etapas");
+  L.push("Cozinha: "+cozDone()+" de "+allCoz().length+" preparos");
   L.push("Refeições: "+mealCount("comi")+" comidas, "+mealCount("troq")+" trocadas, "+mealCount("pulei")+" puladas (de "+totalRef()+")");
   // Uma linha por dia: ✓ comi, ↔ troquei, – pulei, · sem marcar.
   WEEK.forEach((w,d) => {
@@ -671,8 +592,12 @@ function reportText(){
   L.push("Tempo para guardar: "+(r.tguardar||"—"));
   L.push("Tempo de cozinha: "+(r.tcozinha||"—"));
   L.push("Rotina: "+(r.rotina||"—"));
+  L.push("Porção dos adultos: "+(r.porcaoAdultos||"—")+(criancas() ? " · das crianças: "+(r.porcaoCriancas||"—") : ""));
+  // As respostas das perguntas do começo (escolha.js).
+  L.push("Em casa: "+adultos()+" adulto(s) e "+criancas()+" criança(s) · "+fmtPorcao(porcoesCasa()));
+  L.push("Potes: "+POTES.map(ml => potes(ml)+" de "+ml+" ml").join(", "));
   L.push("Refeições por dia: "+nRef());
-  L.push("Não gosta de: "+(GOSTOS.filter(o => naoGosta(o.id)).map(o => o.n.toLowerCase()).join(", ") || "nada marcado"));
+  L.push("Escolheu: "+(nomesEscolhidos().join(", ") || "nada marcado"));
   L.push("Sobrou no freezer: "+(sobras.length ? sobras.join(", ") : "nada"));
   L.push("Pouco ou acabou: "+(pouco.length ? pouco.join(", ") : "nada"));
   L.push("");
@@ -714,15 +639,14 @@ function ask(title, text, yes, label){
   document.getElementById("mNo").onclick = () => m.classList.remove("show");
   document.getElementById("mYes").onclick = () => { m.classList.remove("show"); yes(); };
 }
-// TABS: as abas que existem. Usadas para ler o endereço (#inicio, #cardapio...).
-const TABS = ["inicio","gostos","naogosto","aprovar","preparar","cardapio","estoque","relatorio"];
 // go(): salva, atualiza o endereço da página com a aba atual (#cardapio, por ex.) e redesenha.
 function go(){ save(); if (location.hash !== "#"+S.tab) { try { history.replaceState(null,"","#"+S.tab); } catch(e){} } render(); }
 // Liga os botões da barra de baixo: cada um troca de aba.
 document.querySelectorAll("nav.bot button").forEach(b => b.onclick = () => { S.tab = b.dataset.tab; if (S.tab==="cardapio") S.day=null; go(); window.scrollTo(0,0); });
 // Se o endereço mudar (ex.: botão Voltar do navegador), abre a aba certa.
-window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (TABS.includes(h) && h!==S.tab){ S.tab = h; render(); } });
+// As abas que existem são as do TELAS_MAPA (#inicio, #cardapio...).
+window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (TELAS_MAPA[h] && h!==S.tab){ S.tab = h; render(); } });
 // Ao abrir a página, se o endereço já tiver uma aba (#estoque), começa nela.
-{ const h = location.hash.slice(1); if (TABS.includes(h)) S.tab = h; }
+{ const h = location.hash.slice(1); if (TELAS_MAPA[h]) S.tab = h; }
 // Primeira chamada: desenha a tela assim que a página carrega.
 render();
