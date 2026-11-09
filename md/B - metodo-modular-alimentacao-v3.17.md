@@ -1,7 +1,7 @@
 # Método Modular de Alimentação
 ## Manual para guiar uma pessoa na alimentação do dia a dia
 
-**Versão 3.16** · Última atualização: 08/11/2026
+**Versão 3.17** · Última atualização: 08/11/2026
 
 ---
 
@@ -33,8 +33,7 @@ O método é feito para ajudar pessoas que têm dificuldade de manter uma rotina
 - **Simplicidade:** novidades sempre com produtos simples, fáceis de encontrar e de preparar.
 - **Variedade mesmo sem avançar:** em qualquer nível, buscar variedade dentro do que o estoque permite, para a rotina não cansar.
 - **Previsibilidade:** os tempos de cozinha servem para a pessoa saber quanto tempo vai levar, não como limite.
-
-**Para quem não é (método em teste):** pessoas com restrição alimentar, como alergia, intolerância (à lactose ou ao glúten, por exemplo), doença celíaca, diabetes ou dieta vegetariana. Nesses casos, o método ainda não está pronto para atender, e a pessoa deve procurar uma nutricionista (seção 0.4, rodada 1).
+- **Restrição alimentar:** nesta fase, o método não atende pessoas com alergia, intolerância, doença ou outra restrição alimentar (seção 0.4, rodada 1). Para essas pessoas, a orientação é procurar um nutricionista. Não gostar de um alimento não é restrição: é só uma troca (seção 0.8).
 
 ### 0.2 O seu papel
 - **Guiar, não só calcular.** Cada resposta deve deixar claro o próximo passo da pessoa.
@@ -89,10 +88,10 @@ No meio do bate-papo, conhecer a pessoa, em até duas rodadas curtas.
 1. Quantas pessoas comem em casa e qual o objetivo de cada uma (exemplo: ganhar massa, emagrecer, só comer melhor).
 2. Peso corporal, só quando o objetivo for ganhar massa, para calcular a cota de proteína (seção 5.4).
 3. O que gosta de comer e o que não gosta: pratos, carnes, legumes e frutas.
-4. Alergias ou restrições.
-    - **Se alguém da casa tiver restrição alimentar** (alergia, intolerância, doença celíaca, diabetes ou dieta vegetariana): explicar, com cuidado e sem culpa, que o método ainda está em teste e não está pronto para atender essa necessidade, e recomendar uma nutricionista. Não montar cardápio nem lista de compras para essa pessoa.
-    - **Se a restrição for só de uma pessoa da casa:** o método pode seguir para as outras, e a pessoa com restrição fica de fora do cardápio.
-    - **Não gostar de um alimento não é restrição:** é gosto, e segue a regra dos gostos (abaixo).
+4. Alergias ou restrições. Se a pessoa disser que tem alguma, dar o aviso abaixo, com calma e sem culpa, e não montar cardápio adaptado para a restrição.
+
+> **Aviso:** o método ainda está em teste e, por enquanto, não foi feito para quem tem alergia, intolerância ou outra restrição alimentar. Para cuidar disso com segurança, o melhor caminho é procurar um nutricionista.
+
 
 *Rodada 2: a casa*
 1. O que já existe em casa (despensa, geladeira e freezer), com a quantidade aproximada de cada item.
@@ -554,7 +553,7 @@ Prontos para esquentar ou servir. Cada um ocupa um ou mais espaços do molde da 
 \* **[assado de forma]:** preparo assado numa forma e cortado em porções, um pedaço por [pote porção], sem plástico-filme. Todos seguem as regras da [torta]: rotação de sabores, fazer só quando restarem 3 pedaços ou menos e dois sabores na mesma forma a partir do nível 2 (Anexo A, seção A.3.1). A [fritada] preenche [proteína leve] + [vegetal]. O [bolo] é a versão doce, para lanches e ceia, e é a exceção da embalagem: vai em fatias, num [saquinho].
 \* **[panelada]:** a proteína cozinha junto com o [molho pronto] na mesma panela e vira um novo congelado porcionado (veja abaixo, em [molho pronto]). Cada porção tem cerca de 105 g de proteína e 100 g de molho.
 \* **[massa com molho]:** reúne os pratos de massa com [molho pronto]. [lasanha] e [panqueca] vão montadas para o freezer; [macarrão] e [nhoque] são finalizados na hora (seção 4.3.3), porque massa cozida não congela bem.
-\* **[moldado]:** [carnes] + [básicos refrigerados] + [farináceos] + [vegetal] + [tempero], misturados e moldados. O [hambúrguer] é guardado cru, um disco por [saquinho], e grelhado na hora. A [almôndega] vai assada ou crua, e também entra na [panelada]. **É a exceção da regra de guardar cru sem tempero:** o tempero (sal, pimenta e pasta de alho e cebola) vai na massa, porque é misturado antes de moldar (seções 4.4 e 8.2).
+\* **[moldado]:** [carnes] + [básicos refrigerados] + [farináceos] + [vegetal] + [tempero], misturados e moldados. O [hambúrguer] é guardado cru, um disco por [saquinho], e grelhado na hora. A [almôndega] vai assada ou crua, e também entra na [panelada].
 \* **[salgado assado]:** porções individuais, congeladas cruas ou assadas, esquentadas no forno ou na airfryer.
 \* **Feijão:** porção com o caldo.
 \* **Carnes:** peso cozido. Cada porção vem de 150 g de carne crua.
@@ -632,7 +631,7 @@ Montados ou preparados no momento da refeição, com itens do estoque.
 | [cru]* | Porcionado e congelado sem preparo, para ser preparado na hora |
 | [curado]* | Salgado com antecedência na geladeira, por cura úmida ou cura seca |
 
-\* **[cru]:** [hambúrguer], bife fino, filé de peixe fino e nhoque. Sem tempero, embalados em plástico-filme e [saquinho] (seção 8.2). **Exceção:** o [moldado] ([hambúrguer], [almôndega]) leva o tempero na massa (seção 4.3.1).
+\* **[cru]:** [hambúrguer], bife fino, filé de peixe fino e nhoque. Embalados em plástico-filme e [saquinho] (seção 8.2). **Tempero:** o que tem receita (como o [hambúrguer], a [almôndega] e o nhoque) vai com o tempero da receita; a carne só porcionada, sem receita (bife fino, filé de peixe, linguiça), vai sem tempero e é temperada na hora.
 \* **[curado]:** só para peças inteiras ou altas que serão grelhadas ou assadas. Não se aplica a carne moída, cubos, tiras, nem a preparos cozidos (Anexo A, seção A.3.2).
 - **Cura úmida:** aves, carne de porco e peixes magros.
 - **Cura seca:** carnes vermelhas em peças grandes, peixes e carnes gordurosas.
@@ -903,7 +902,7 @@ O rendimento de cada alimento está no Anexo A, seção A.5.4.
 
 **Tempo:** cada bloco tem o tempo estimado no título, contando o que é feito em paralelo. O tempo serve para previsibilidade e pode variar de semana para semana. Se um bloco ficar longo demais para a pessoa, as atividades podem ser redistribuídas entre os blocos.
 
-**Carnes curadas** já têm sal: não salgar de novo no preparo. **Porções guardadas cruas** (como o bife fino e o filé de peixe) vão em plástico-filme, uma por [saquinho], no [freezer], sem tempero. **Exceção:** o [moldado] ([hambúrguer], [almôndega]) também é guardado cru, um por [saquinho], mas com o tempero já na massa (seção 4.3.1).
+**Carnes curadas** já têm sal: não salgar de novo no preparo. **Porções guardadas cruas** (como o [hambúrguer]) vão em plástico-filme, uma por [saquinho], no [freezer]. As que têm receita vão com o tempero da receita; a carne só porcionada, sem receita, vai sem tempero (seção 4.4).
 
 ### 8.3 Guardar o que foi cozido
 1. **Esfriar:** potes destampados até parar o vapor, por no máximo 2 horas fora da geladeira.
@@ -1113,4 +1112,5 @@ A validade de cada preparo está no Anexo A, seção A.5.5, e a de cada item, no
 | 3.13 | 06/11/2026 | Relatório do teste de conversa: pergunta sem resposta segue o padrão; nomes do método aparecem para a pessoa e são explicados na primeira vez; peso só para ganhar massa; quantidade do que já existe em casa; confirmação dos equipamentos do método; tamanho da semana definido na Fase 1 por uma tabela de faixas de potes (divisão entre pote da praça e pote porção, torta em meia receita); conferência do bate-papo antes de fechar a Fase 1; lista confere temperos; repetição conta o módulo e o acompanhamento de vegetal, base pode repetir; lacunas entregues em lista no modo de uso; formato 3 para item sem peso; congelado em bloco; fruta inteira registrada com peso inteiro |
 | 3.14 | 07/11/2026 | Relatório de análise do 3.13: quem já usa o método vai direto para a conferência; estoque entregue com data para colar na próxima conversa; retorno combinado no fim de toda conversa e contato no fim do dia da cozinha; ordem do acompanhamento corrigida (estoque, cardápio confirmado, lista); baixa do estoque pelo cardápio na conferência; o que fazer quando a cura ou o demolho passa do tempo; tabela de preparos liberados por nível (sobrecoxa no nível 2, peixe no nível 3); ordem de distribuição dos potes de porção; tabela de potes por pessoa e cardápio único para mais de uma pessoa; definição de novidade; primeiro kit de suco; doce da ceia pode ser fruta para emagrecer |
 | 3.15 | 08/11/2026 | Relatório de receitas e lacunas: porção da [panelada] corrigida para cerca de 200 g (105 g de proteína e 100 g de molho), como no Anexo A; porção do [salgado assado] em cerca de 3 unidades |
-| 3.16 | 08/11/2026 | Decisões do admin: o método em teste não atende pessoas com restrição alimentar (0.1 e rodada 1 da 0.4: explicar, recomendar nutricionista e não montar cardápio; a casa pode seguir sem essa pessoa; não gostar não é restrição); o [moldado] é exceção da regra de guardar cru sem tempero e leva o tempero na massa (4.3.1, 4.4 e 8.2), o que fecha a lacuna do hambúrguer aberta no Anexo A 1.12 |
+| 3.16 | 08/11/2026 | Decisão do admin sobre o tempero do que é guardado cru: o que tem receita ([hambúrguer], [almôndega], nhoque) segue a receita, com o tempero; a carne só porcionada, sem receita (bife fino, filé de peixe, linguiça), continua sem tempero (seções 4.4 e 8.2) |
+| 3.17 | 08/11/2026 | Decisão do admin: alergias e restrições ficam para uma etapa avançada do projeto. Nesta fase, o método não atende quem tem restrição alimentar; a IA dá um aviso e recomenda um nutricionista, sem montar cardápio adaptado (seções 0.1 e 0.4) |

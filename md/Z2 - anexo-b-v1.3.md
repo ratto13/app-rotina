@@ -1,7 +1,7 @@
 # Anexo B
 ## Registro das conversas do projeto
 
-**Versão 1.1** · Criado em 08/11/2026 · Última atualização: 08/11/2026
+**Versão 1.3** · Criado em 08/11/2026 · Última atualização: 08/11/2026
 
 ---
 
@@ -22,6 +22,51 @@
 ---
 
 ## B.1 Registros
+
+### 08/11/2026 · Aviso de restrição alimentar no manual 3.17
+
+**Feito**
+- **Manual 3.17:** aviso de restrição alimentar nas seções 0.1 e 0.4 (rodada 1).
+
+**Decidido**
+- **Alergias e restrições ficam para uma etapa avançada do projeto.** Nesta fase, o método não atende quem tem restrição alimentar: a IA dá um aviso, recomenda um nutricionista e não monta cardápio adaptado. Não gostar não é restrição. *Aplicado no manual 3.17.*
+
+**Pendente**
+- **Restrições alimentares no método:** voltar ao assunto numa etapa avançada do projeto.
+
+### 08/11/2026 · Banco de dados ampliado, fichas e tempero do que é guardado cru
+
+**Feito**
+- **Revisão do Anexo A:** relatório de lacunas e de receitas novas (usado na conversa, fora do Projeto).
+- **Anexo A 1.11:** tabelas soltas removidas; purê com 6 porções de 170 g; panelada com cerca de 200 g; almôndegas por porção; "Polvilho doce"; lista sugerida com orégano, açúcar em Matinais e 36 ovos.
+- **Anexo A 1.12:** banco ampliado, tudo marcado com \* para revisão. 4 itens novos (pão francês, açafrão-da-terra, músculo, ricota), 5 kits novos, cerca de 30 receitas novas ou completadas, validade depois de descongelar e tabela de proteína por porção (A.5.6).
+- **Anexo A 1.13 e manual 3.16:** regra do tempero do que é guardado cru (ver "Decidido"). A lacuna do hambúrguer saiu da seção A.7.
+- **Manual 3.15:** porção da panelada (cerca de 200 g) e do salgado assado (cerca de 3 unidades) iguais ao Anexo A.
+- **Padrão 1.1:** versões do manual e do Anexo A atualizadas, "forminha" trocada por "cubo", e as fichas passam a ficar no arquivo de fichas.
+- **Arquivo novo `D - fichas-banco-de-dados-v1.0`:** 56 fichas no formato do padrão (4 ingredientes, 43 preparos e 9 pratos na hora), com os itens novos do Anexo A 1.12.
+- **Arquivo do projeto 1.3:** lista de arquivos com A, B, C, D, Z1 e Z2, leitura do Anexo B no começo de cada conversa e pasta `md`.
+
+**Decidido**
+- **Guardado cru:** o que tem receita (hambúrguer, almôndega, nhoque, hambúrguer de atum) vai com o tempero da receita; a carne só porcionada, sem receita (bife fino, filé de peixe, linguiça), vai sem tempero. *Aplicado no manual 3.16 (seções 4.4 e 8.2) e no Anexo A 1.13 (A.4.1).*
+- **Purê:** 170 g, como no manual. *Anexo A 1.11.*
+- **Panelada:** cerca de 200 g (105 g de proteína e 100 g de molho). *Manual 3.15 e Anexo A 1.11.*
+- **Ovos na primeira compra:** 36, o máximo da compra base. *Anexo A 1.11.*
+- **Embalagem no padrão:** "cubo", como no manual. *Padrão 1.1.*
+- **Fichas em arquivo separado** (D), para a página ler sem mexer no Anexo A. O Anexo A continua sendo a fonte. *Padrão 1.1 e arquivo de fichas 1.0.*
+
+**Pendente**
+- **Revisar os itens marcados com \* no Anexo A 1.12** e aprovar os níveis sugeridos nas fichas.
+- **Padrão 1.2:** decidir os módulos sugeridos no fim do arquivo de fichas (recheio pronto, arroz e feijão na hora, acompanhamento na hora, doce de frigideira).
+- **Fichas dos itens antigos do Anexo A** e as ligações que faltam (seção 4 do arquivo de fichas).
+- **Tempo de preparo de cada receita** e **tabela de frutas da estação** no Anexo A.
+- **Tabela de proteína por porção:** revisar com uma nutricionista.
+- **Instruções do Projeto:** incluir o arquivo de fichas na lista dos "arquivos do método".
+- **Restrição alimentar no manual:** o registro anterior diz que o manual 3.16 manda explicar e recomendar uma nutricionista, mas o manual 3.16 que está no Projeto não tem essa regra. Decidir se ela entra numa versão 3.17. ✅ 08/11/2026 (manual 3.17)
+- Subir para o Projeto o **arquivo do projeto 1.3**, o **padrão 1.1**, o **arquivo de fichas 1.0** e este **Anexo B 1.2**.
+
+**Para lembrar**
+- **As quantidades, os tempos e a proteína das receitas novas são estimativas,** feitas a partir de receitas comuns, e não foram testadas na cozinha.
+- **Se uma ficha e o Anexo A disserem coisas diferentes,** vale o Anexo A, e a ficha é corrigida.
 
 ### 08/11/2026 · Site de teste, Semana 2, padrão do banco de dados e manual 3.16
 
@@ -58,9 +103,9 @@
 
 **Pendente**
 - Subir para o Projeto o **arquivo do projeto v1.2** e o **padrão v1.1**, se ainda não tiverem sido trocados.
-- **Arquivo do projeto v1.3:** incluir o Anexo B na lista de arquivos (seção 1), com os nomes Z1 e Z2, e citar a pasta `md` do repositório.
+- **Arquivo do projeto v1.3:** incluir o Anexo B na lista de arquivos (seção 1), com os nomes Z1 e Z2, e citar a pasta `md` do repositório. ✅ 08/11/2026 (arquivo do projeto 1.3)
 - **Conferir a pasta do site:** `script.js`, `style.css` e `index.html` precisam ser as últimas versões entregues (a tela de perguntas tem o botão "Próxima pergunta").
-- **Próximo Anexo A:** converter os itens antigos para o padrão; fechar a lacuna do hambúrguer na seção A.7; ajustar a regra "guardadas cruas, sem tempero" da matriz (A.4.1), citando a exceção do moldado. *Conferir se o Anexo A 1.13 já fez isso.*
+- **Próximo Anexo A:** converter os itens antigos para o padrão; fechar a lacuna do hambúrguer na seção A.7; ajustar a regra "guardadas cruas, sem tempero" da matriz (A.4.1), citando a exceção do moldado. ✅ 08/11/2026 em parte: a lacuna e a regra da matriz foram feitas no Anexo A 1.13; a conversão dos itens antigos continua pendente (ver o registro mais novo).
 - **Ampliar o "Do que você não gosta?"** quando o banco de dados estiver pronto: bebidas, frios, frutas e verduras, e por último os pratos do freezer.
 - **Trocar os `dados-semanaN.js`** para o formato do padrão quando o banco estiver pronto.
 - **Semana 3** e as seguintes.
@@ -82,3 +127,5 @@
 | --- | --- | --- |
 | 1.0 | 08/11/2026 | Criação: regras do registro e o primeiro registro (site de teste, Semana 2, padrão do banco de dados e manual 3.16) |
 | 1.1 | 08/11/2026 | Fim da conversa de 08/11: pasta `md` no GitHub, nomes Z1 e Z2 no Projeto, pendências do arquivo do projeto v1.3 e da conferência da pasta do site, lembrete de ler o Anexo B no começo de cada conversa |
+| 1.2 | 08/11/2026 | Registro da conversa do banco de dados ampliado (Anexo A 1.11 a 1.13, manual 3.15 e 3.16, padrão 1.1, fichas 1.0, projeto 1.3); duas pendências do registro anterior marcadas com ✅ |
+| 1.3 | 08/11/2026 | Registro do aviso de restrição alimentar (manual 3.17); pendência da restrição no manual marcada com ✅ |

@@ -1,7 +1,7 @@
 # Projeto App · Método Modular de Alimentação
 ## Visão do produto e do negócio
 
-**Versão 1.2** · Criado em 07/11/2026 · Última atualização: 08/11/2026
+**Versão 1.3** · Criado em 07/11/2026 · Última atualização: 08/11/2026
 
 ---
 
@@ -13,12 +13,13 @@
 - **O método em si** (manual, Anexo A, padrão e fichas do banco de dados) fica neste projeto. Não altere esses arquivos sem confirmar com o admin. Se um pedido for contra uma regra do manual, avise antes de mudar.
 - **Ao adicionar ou mudar alimentos, ingredientes, preparos ou pratos,** siga o padrão do banco de dados (a versão mais alta) e escreva a ficha no arquivo de fichas.
 - **Não adicione nem apague arquivos do Projeto.** Entregue o arquivo para o admin baixar e atualizar.
+- **No começo de cada conversa,** leia o Anexo B (a versão mais alta) para saber onde o projeto parou. No fim, entregue o registro novo da conversa para o admin atualizar o Anexo B.
 - **Confirme antes de mudar** este arquivo. Toda mudança gera versão (1.1, 1.2 e assim por diante) e entra no histórico da seção 8.
 
 ---
 
 ## 1. Arquivos do projeto
-Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabética, e a versão no nome (exemplo: `Z - anexo-a-v1.13.md`). Toda mudança gera uma versão nova, com o número no nome e registro no histórico. Usar sempre a versão mais alta que estiver no projeto.
+Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabética, e a versão no nome (exemplo: `Z1 - anexo-a-v1.13.md`). Toda mudança gera uma versão nova, com o número no nome e registro no histórico. Usar sempre a versão mais alta que estiver no projeto.
 
 | Letra | Arquivo | Para que serve |
 | --- | --- | --- |
@@ -26,7 +27,10 @@ Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabétic
 | B | Manual (`metodo-modular-alimentacao`) | As regras do método: é o que o app precisa seguir |
 | C | Padrão do banco de dados (`padrao-banco-de-dados`) | O formato e as etiquetas de cada item, para a página fazer as trocas sozinha |
 | D | Fichas do banco de dados (`fichas-banco-de-dados`) | Os itens já escritos no formato do padrão, prontos para a página |
-| Z | Anexo A (`anexo-a`) | Os dados: catálogo, receitas e tabelas. É a fonte do banco de dados do app |
+| Z1 | Anexo A (`anexo-a`) | Os dados: catálogo, receitas e tabelas. É a fonte do banco de dados do app |
+| Z2 | Anexo B (`anexo-b`) | O registro das conversas: o que foi feito, decidido e deixado pendente |
+
+**No GitHub:** os arquivos do método ficam também na pasta `md` do repositório `ratto13/app-rotina`, junto com o site. O repositório é público, então qualquer pessoa pode ver esses arquivos (para esconder: arquivo `.gitignore` com a linha `md/` e o comando `git rm -r --cached md`).
 
 ---
 
@@ -100,6 +104,7 @@ Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabétic
 | 1.0 | 07/11/2026 | Criação: visão do produto, decisões, caminho sugerido, custos e cuidados |
 | 1.1 | 08/11/2026 | Arquivos com a versão no nome, inclusive este (usar sempre a mais alta); relatório de receitas e lacunas na lista de arquivos; a IA pode alterar os arquivos do método quando o admin pedir |
 | 1.2 | 08/11/2026 | Lista de arquivos com as letras, o padrão e as fichas do banco de dados (sai o relatório); o método fica neste projeto, com confirmação do admin antes de mudar; instruções do projeto iguais às que estão no Claude |
+| 1.3 | 08/11/2026 | Anexo B na lista de arquivos, com os nomes Z1 e Z2; leitura do Anexo B no começo de cada conversa; pasta `md` do repositório; instruções do projeto atualizadas |
 
 ---
 
@@ -113,8 +118,8 @@ Cada arquivo leva uma letra maiúscula na frente, para ficar em ordem alfabétic
 > - Toda mudança gera nova versão, com o número no nome do arquivo (ex.: anexo-a-v1.12.md) e registro no histórico.
 > - Não adicione nem apague arquivos do Projeto. Entregue o arquivo para eu baixar e atualizar.
 > - Manter a letra em maiúsculo para propósito de organização de arquivos de forma alfabética
->
-> Ao adicionar ou mudar alimentos, ingredientes, preparos ou pratos, siga o arquivo padrao-banco-de-dados (a versão mais recente).
+> - Ao adicionar ou mudar alimentos, ingredientes, preparos ou pratos, siga o arquivo padrao-banco-de-dados (a versão mais recente).
+> - No começo de cada conversa, leia o anexo-b (a versão mais recente) para saber onde o projeto parou.
 >
 > Site de teste:
 > - Fica no GitHub (ratto13/app-rotina) e é publicado pelo GitHub Pages.
